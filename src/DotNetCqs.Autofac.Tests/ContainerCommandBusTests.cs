@@ -17,7 +17,7 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public async Task executed_job_should_be_stored()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
             var cmd = new Command();
 
@@ -30,7 +30,7 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public async Task ExecuteJobAsync_should_return_directly_if_there_are_no_more_jobs()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
 
             var sut = new ContainerCommandBus(storage, container);
@@ -43,7 +43,7 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public void allow_only_one_command_handler()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
             var scope = Substitute.For<IContainerScope>();
             var handler1 = Substitute.For<ICommandHandler<Command>>();
@@ -63,7 +63,7 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public void a_comamnd_handlr_is_mandatory()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
             var scope = Substitute.For<IContainerScope>();
             storage.PopCommandAsync().Returns(Task.FromResult(new Command()));
@@ -81,7 +81,7 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public async Task invoke_the_handler_successfully()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
             var scope = Substitute.For<IContainerScope>();
             var handler1 = Substitute.For<ICommandHandler<Command>>();
@@ -99,7 +99,7 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public async Task trigger_failed_event_When_handler_throws_an_Exception()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
             var scope = Substitute.For<IContainerScope>();
             var handler1 = Substitute.For<ICommandHandler<Command>>();

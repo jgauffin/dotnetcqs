@@ -17,16 +17,18 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public void allow_only_one_query_handler()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
-            var scope = Substitute.For<IContainerScope>();
+            var scope = Substitute.For<ILifetimeScope>();
             var handler1 = Substitute.For<IRequestHandler<Request<string>, string>>();
             var handler2 = Substitute.For<IRequestHandler<Request<string>, string>>();
             var request = Substitute.For<Request<string>>();
             storage.PopRequestAsync().Returns(Task.FromResult((IRequest)request));
-            container.CreateScope().Returns(scope);
-            scope.ResolveAll(typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string)))
-                .Returns(new object[] { handler1, handler2 });
+            container.BeginLifetimeScope().Returns(scope);
+            var type = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string));
+            var collectionType = typeof(IEnumerable<>).MakeGenericType(type);
+            scope.Resolve(collectionType)
+                .Returns(new object[] {handler1, handler2});
 
             var sut = new ContainerRequestReplyBus(container);
             var task = sut.ExecuteAsync(request);
@@ -38,15 +40,16 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public async Task make_sure_that_a_real_handler_works()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
-            var scope = Substitute.For<IContainerScope>();
+            var scope = Substitute.For<ILifetimeScope>();
             var handler1 = Substitute.For<IRequestHandler<MyRequest, string>>();
             var request = new MyRequest();
             handler1.ExecuteAsync(request).Returns(Task.FromResult("Hello world"));
             storage.PopRequestAsync().Returns(Task.FromResult((IRequest)request));
-            container.CreateScope().Returns(scope);
-            scope.ResolveAll(typeof(IRequestHandler<MyRequest, string>))
+            container.BeginLifetimeScope().Returns(scope);
+            var collectionType = typeof(IEnumerable<IRequestHandler<MyRequest,string>>);
+            scope.Resolve(collectionType)
                 .Returns(new object[] { handler1 });
 
             var sut = new ContainerRequestReplyBus(container);
@@ -63,13 +66,13 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public void a_query_handler_is_mandatory()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
-            var scope = Substitute.For<IContainerScope>();
+            var scope = Substitute.For<ILifetimeScope>();
             var request = Substitute.For<Request<string>>();
             storage.PopRequestAsync().Returns(Task.FromResult((IRequest)request));
-            container.CreateScope().Returns(scope);
-            scope.ResolveAll(typeof(IRequestHandler<Request<string>, string>))
+            container.BeginLifetimeScope().Returns(scope);
+            scope.Resolve(typeof(IEnumerable<IRequestHandler<Request<string>, string>>))
                 .Returns(new object[0]);
 
             var sut = new ContainerRequestReplyBus(container);
@@ -82,15 +85,16 @@ namespace DotNetCqs.Autofac.Tests
         [Fact]
         public async Task invoke_the_handler_successfully()
         {
-            var storage = Substitute.For<IFileStorage>();
+            var storage = Substitute.For<ICqsStorage>();
             var container = Substitute.For<IContainer>();
-            var scope = Substitute.For<IContainerScope>();
+            var scope = Substitute.For<ILifetimeScope>();
             var handler1 = Substitute.For<IRequestHandler<Request<string>, string>>();
             var request = Substitute.For<Request<string>>();
             handler1.ExecuteAsync(request).Returns(Task.FromResult("Hello world"));
             storage.PopRequestAsync().Returns(Task.FromResult((IRequest)request));
-            container.CreateScope().Returns(scope);
-            scope.ResolveAll(typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string)))
+            container.BeginLifetimeScope().Returns(scope);
+            var type = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string));
+            scope.Resolve(typeof(IEnumerable<>).MakeGenericType(type))
                 .Returns(new object[] { handler1 });
 
             var sut = new ContainerRequestReplyBus(container);
@@ -103,14 +107,15 @@ namespace DotNetCqs.Autofac.Tests
         public async Task do_not_catch_handler_Exceptions()
         {
             var container = Substitute.For<IContainer>();
-            var scope = Substitute.For<IContainerScope>();
+            var scope = Substitute.For<ILifetimeScope>();
             var handler1 = Substitute.For<IRequestHandler<Request<string>, string>>();
             var request = Substitute.For<Request<string>>();
             handler1
                 .When(x => x.ExecuteAsync(request))
                 .Do(x => { throw new InvalidCastException(); });
-            container.CreateScope().Returns(scope);
-            scope.ResolveAll(typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string)))
+            container.BeginLifetimeScope().Returns(scope);
+            var type = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string));
+            scope.Resolve(typeof(IEnumerable<>).MakeGenericType(type))
                 .Returns(new object[] { handler1 });
 
             var sut = new ContainerRequestReplyBus(container);
@@ -121,7 +126,7 @@ namespace DotNetCqs.Autofac.Tests
             }
             catch (AggregateException exception)
             {
-                scope.Received().ResolveAll(typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(string)));
+                scope.Received().Resolve(typeof(IEnumerable<>).MakeGenericType(type));
                 exception.InnerException.Should().BeOfType<InvalidCastException>();
             }
 

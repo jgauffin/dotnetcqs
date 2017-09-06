@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using DotNetCqs.Autofac.Storage;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNetCqs.Autofac.Tests
 {
-    public class FileStorageIntegrationTests : IDisposable
+    public class CqsFileStorageIntegrationTests : IDisposable
     {
         public string _path;
 
-        public FileStorageIntegrationTests()
+        public CqsFileStorageIntegrationTests()
         {
             _path= Path.GetTempFileName();
             _path = _path.Remove(_path.Length - 4, 4);
@@ -25,7 +26,7 @@ namespace DotNetCqs.Autofac.Tests
         public async Task Store_and_push_a_command()
         {
             var expected = new MyCommand();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected);
             var actual = (MyCommand) await sut.PopCommandAsync();
@@ -37,7 +38,7 @@ namespace DotNetCqs.Autofac.Tests
         public async Task Store_and_push_a_query()
         {
             var expected = new MyQuery();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected);
             var actual = (MyQuery) await sut.PopQueryAsync();
@@ -49,7 +50,7 @@ namespace DotNetCqs.Autofac.Tests
         public async Task Store_and_push_a_event()
         {
             var expected = new MyEvent();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected);
             var actual = (MyEvent) await sut.PopEventAsync();
@@ -61,7 +62,7 @@ namespace DotNetCqs.Autofac.Tests
         public async Task Store_and_push_a_request()
         {
             var expected = new MyRequest();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected);
             var actual = (MyRequest) await sut.PopRequestAsync();
@@ -74,7 +75,7 @@ namespace DotNetCqs.Autofac.Tests
         {
             var expected1 = new MyCommand();
             var expected2 = new MyCommand();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected1);
             await sut.PushAsync(expected2);
@@ -91,7 +92,7 @@ namespace DotNetCqs.Autofac.Tests
         {
             var expected1 = new MyQuery();
             var expected2 = new MyQuery();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected1);
             await sut.PushAsync(expected2);
@@ -107,7 +108,7 @@ namespace DotNetCqs.Autofac.Tests
         {
             var expected1 = new MyEvent();
             var expected2 = new MyEvent();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected1);
             await sut.PushAsync(expected2);
@@ -123,7 +124,7 @@ namespace DotNetCqs.Autofac.Tests
         {
             var expected1 = new MyRequest();
             var expected2 = new MyRequest();
-            var sut = new FileStorage(_path);
+            var sut = new CqsFileStorage(_path);
 
             await sut.PushAsync(expected1);
             await sut.PushAsync(expected2);
