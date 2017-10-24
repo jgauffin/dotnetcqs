@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs.Queues.AdoNet</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>1.0.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,9 +24,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="DotNetCqs">
-      <HintPath>..\DotNetCqs\bin\$(Configuration)\$(TargetFramework)\DotNetCqs.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\DotNetCqs\DotNetCqs.csproj">
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

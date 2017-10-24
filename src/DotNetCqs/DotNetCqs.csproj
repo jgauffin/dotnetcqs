@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs</RootNamespace>
-    <Version>2.0.3.7</Version>
+    <Version>2.0.3.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
   </PropertyGroup>
@@ -18,7 +18,7 @@
       New minimal interfaces and abstractions to be able to
       handle authorization and other context data which otherwise is hard to supply for asynchronous applications.
 
-      Moved queryBus to an own class since it typically requires another context (scoped) than the bus (single instance)
+      Forgot to rename namespaces on imported classes.
     </PackageReleaseNotes>
     <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction</PackageTags>
