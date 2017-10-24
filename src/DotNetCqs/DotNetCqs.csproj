@@ -3,22 +3,30 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs</RootNamespace>
+    <Version>2.0.3.7</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <PackageId>DotNetCqs</PackageId>
-    <Authors>1TCompany AB</Authors>
-    <Description>Command/Query abstraction library</Description>
+    <Authors>jgauffin</Authors>
+    <Description>Command/Query abstraction library for .NET applications.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Converted to vstudio 2017 csproj format + NetStandard support</PackageReleaseNotes>
-    <Copyright>Copyright 2017 © 1TCompany AB. All rights reserved.</Copyright>
+    <PackageReleaseNotes>
+      Published version 2.0. Breaking changes. All old interfaces are retired.
+      New minimal interfaces and abstractions to be able to
+      handle authorization and other context data which otherwise is hard to supply for asynchronous applications.
+
+      Moved queryBus to an own class since it typically requires another context (scoped) than the bus (single instance)
+    </PackageReleaseNotes>
+    <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/jgauffin/dotnetcqs</PackageProjectUrl>
-    <Version>1.0.1</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\$(Configuration)\netstandard1.5\DotNetCqs.xml</DocumentationFile>
-  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>

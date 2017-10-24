@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <RootNamespace>DotNetCqs.Queues.AdoNet</RootNamespace>
+    <Version>1.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>DotNetCqs.Queues.AdoNet</PackageId>
+    <Authors>jgauffin</Authors>
+    <Description>ADO.NET based queues for DotNetCqs.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>
+      First version
+    </PackageReleaseNotes>
+    <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
+    <PackageTags>cqrs cqs command query abstraction</PackageTags>
+    <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/jgauffin/dotnetcqs</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="DotNetCqs">
+      <HintPath>..\DotNetCqs\bin\$(Configuration)\$(TargetFramework)\DotNetCqs.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

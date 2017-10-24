@@ -1,0 +1,5 @@
+﻿{
+  "ConnectionStrings": {
+    "TestDb": "Server=.;Database=DotNetCqsTest;Trusted_Connection=True;"
+  }
+}

@@ -1,19 +1,69 @@
-Asynchronous Command/Query separation library definition.
-=============
+Asynchronous Command/Query library
+===================================
 
-Contains all interfaces which are required to create a fully functional Command/Query separation library.
+This library contains interfaces used to be able to use messaging (commands, queries and events) in applications without tightly coupling it to a specific implementation.
 
-The purpose of the library is to allow you to start small and refactor your application with minimal changes
-when the requirement to scale arises. 
+## Example
 
-i.e. it do only contain the interfaces that you need to start using Command/query. By using the interfaces you can at any time switch implementation (like from using an inversion control container to start sending commands over a message bus)
+Define a message:
 
-Existing imlementations (in other libraries)
+```csharp
+public class ActivateAccount
+{
+	public int AccountId {get; set; }
+	public string ActivationKey { get; set; }
+}
+```
 
-* Via TCP
-* Azure Service Bus
-* Autofac
-* Reflection based
+Invoke it:
 
+```csharp
+var msg = new ActivateAccount { AccountId = 35, ActivationKey = "dfkldsie93kcn22" };
+await _messageBus.SendAsync(msg);
+```
 
+Handle it:
+
+```csharp
+public class ActivateAccountHandler : IMessageHandler<ActivateAccount>
+{
+    private readonly IAccountRepository _repository;
 	
+	public ActivateAccountHandler(IAccountRepository repository)
+	{
+		if (repository == null) throw new ArgumentNullException(repository);
+		
+		_repository = repository;
+	}
+	
+	public async Task HandleAsync(IMessageContext context, ActivateAccount message)
+	{
+		var user = await _repository.Get(message.AccountId);
+		user.Activate(message.ActivationKey);
+		await _repository.UpdateAsync(user);
+		
+		await context.SendAsync(new AccountActivated(message.AccountId));
+	}
+}
+```
+
+Message handlers are fully isolated from the rest of the specification and therefore easy to test and maintain.
+
+
+# Implementations
+
+The following implementations exist.
+
+## Bus 
+
+The `MessageBus` and `QueryBus` currently have the following implementations:
+
+* DependenyInjection: Use your favorite container to execute and queue messages.
+ * Microsoft.Extensions.DependencyInjection: Currently under implementation
+ * Griffin.Container: Currently under implementation
+
+## Queues
+
+* ADO.NET: Uses a table in your database to enqueue and dequeue messages (to get persistance).
+* Azure ServiceBus: Under development
+

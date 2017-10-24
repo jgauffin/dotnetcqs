@@ -1,13 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs", "DotNetCqs\DotNetCqs.csproj", "{17D91889-302A-4DDF-9BD8-C1DF04B549B8}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs", "DotNetCqs\DotNetCqs.csproj", "{17D91889-302A-4DDF-9BD8-C1DF04B549B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.AspNet", "DotNetCqs.AspNet\DotNetCqs.AspNet.csproj", "{EB92E318-ABF7-4286-B83D-767D964EDE98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.DependencyInjection.Microsoft", "DotNetCqs.DependencyInjection\DotNetCqs.DependencyInjection.Microsoft.csproj", "{2FC676CB-084F-45FC-B561-BF3140B335C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Autofac", "DotNetCqs.Autofac\DotNetCqs.Autofac.csproj", "{473B10ED-6B00-49BA-B21C-028205932DF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Tests", "DotNetCqs.DependencyInjection.Tests\DotNetCqs.Tests.csproj", "{52B2E159-3507-4DA8-9E21-E3617CF0BD69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Autofac.Tests", "DotNetCqs.Autofac.Tests\DotNetCqs.Autofac.Tests.csproj", "{3C403C3C-C450-4BC9-A1FD-D28F0589C985}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.DependencyInjection.GriffinContainer", "DotNetCqs.DependencyInjection.GriffinContainer\DotNetCqs.DependencyInjection.GriffinContainer.csproj", "{A86AC66C-ADB6-48F4-A82E-467EA5AB805C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Azure.ServiceBus", "DotNetCqs.Azure.ServiceBus\DotNetCqs.Azure.ServiceBus.csproj", "{EDBE1001-4335-4F2A-BA63-02A963AC8E50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Queues.AdoNet", "DotNetCqs.Queues.AdoNet\DotNetCqs.Queues.AdoNet.csproj", "{FDFCE6C6-3909-4B85-B969-3C97697C1E84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Queues.AdoNet.IntegrationTests", "DotNetCqs.AdoNet.IntegrationTests\DotNetCqs.Queues.AdoNet.IntegrationTests.csproj", "{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,20 +27,35 @@ Global
 		{17D91889-302A-4DDF-9BD8-C1DF04B549B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17D91889-302A-4DDF-9BD8-C1DF04B549B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17D91889-302A-4DDF-9BD8-C1DF04B549B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB92E318-ABF7-4286-B83D-767D964EDE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB92E318-ABF7-4286-B83D-767D964EDE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB92E318-ABF7-4286-B83D-767D964EDE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB92E318-ABF7-4286-B83D-767D964EDE98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{473B10ED-6B00-49BA-B21C-028205932DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{473B10ED-6B00-49BA-B21C-028205932DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{473B10ED-6B00-49BA-B21C-028205932DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{473B10ED-6B00-49BA-B21C-028205932DF9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FC676CB-084F-45FC-B561-BF3140B335C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FC676CB-084F-45FC-B561-BF3140B335C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FC676CB-084F-45FC-B561-BF3140B335C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FC676CB-084F-45FC-B561-BF3140B335C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52B2E159-3507-4DA8-9E21-E3617CF0BD69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52B2E159-3507-4DA8-9E21-E3617CF0BD69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52B2E159-3507-4DA8-9E21-E3617CF0BD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52B2E159-3507-4DA8-9E21-E3617CF0BD69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A86AC66C-ADB6-48F4-A82E-467EA5AB805C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A86AC66C-ADB6-48F4-A82E-467EA5AB805C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A86AC66C-ADB6-48F4-A82E-467EA5AB805C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A86AC66C-ADB6-48F4-A82E-467EA5AB805C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDBE1001-4335-4F2A-BA63-02A963AC8E50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDBE1001-4335-4F2A-BA63-02A963AC8E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDBE1001-4335-4F2A-BA63-02A963AC8E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDBE1001-4335-4F2A-BA63-02A963AC8E50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDFCE6C6-3909-4B85-B969-3C97697C1E84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFCE6C6-3909-4B85-B969-3C97697C1E84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFCE6C6-3909-4B85-B969-3C97697C1E84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFCE6C6-3909-4B85-B969-3C97697C1E84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0419D7B3-AFCD-4F72-8CF7-0E4A6EE39816}
 	EndGlobalSection
 EndGlobal

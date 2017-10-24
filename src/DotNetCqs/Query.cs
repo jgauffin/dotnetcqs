@@ -1,33 +1,10 @@
-﻿using System;
-
-namespace DotNetCqs
+﻿namespace DotNetCqs
 {
     /// <summary>
-    ///     Query base class.
+    ///     This is a query
     /// </summary>
-    /// <typeparam name="TResult">Type of result that the query will return</typeparam>
-    /// <remarks>
-    ///     <para>
-    ///         Queries may not change the application state. They are only used to fetch pre-generated data. And by following
-    ///         that principle we can introduce caching later on.
-    ///     </para>
-    ///     <para>
-    ///         Uses <see cref="GuidFactory" /> to assign the <see cref="QueryId" />.
-    ///     </para>
-    /// </remarks>
-    public class Query<TResult> : IQuery
+    /// <typeparam name="TResult">Expected result from the query</typeparam>
+    public class Query<TResult>
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Query{TResult}" /> class.
-        /// </summary>
-        public Query()
-        {
-            QueryId = GuidFactory.Create();
-        }
-
-        /// <summary>
-        ///     Gets unique identifier for this query.
-        /// </summary>
-        public Guid QueryId { get; private set; }
     }
 }

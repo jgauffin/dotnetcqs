@@ -157,3 +157,4 @@ $RECYCLE.BIN/
 Examples/Autofac/packages/*/
 */packages/*/
 src/DotNetCqs.Autofac/packages/*/
+**/.vs/**

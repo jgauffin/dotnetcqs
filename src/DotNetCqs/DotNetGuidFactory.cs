@@ -3,15 +3,15 @@
 namespace DotNetCqs
 {
     /// <summary>
-    /// Uses .NET to generated Guids
+    ///     Uses .NET to generated Guids
     /// </summary>
     public class DotNetGuidFactory : IGuidFactory
     {
         /// <summary>
-        /// Create a new GUID.
+        ///     Create a new GUID.
         /// </summary>
         /// <returns>
-        /// Created GUID.
+        ///     Created GUID.
         /// </returns>
         public Guid Create()
         {
