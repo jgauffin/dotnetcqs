@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs.Queues.AdoNet</RootNamespace>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
   </PropertyGroup>
@@ -14,10 +14,10 @@
     <Description>ADO.NET based queues for DotNetCqs.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-      First version
+      Are now transporting authenticationType in the claim identity DTO
     </PackageReleaseNotes>
     <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
-    <PackageTags>cqrs cqs command query abstraction</PackageTags>
+    <PackageTags>cqrs cqs command query adonet queues messaging</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/jgauffin/dotnetcqs</PackageProjectUrl>

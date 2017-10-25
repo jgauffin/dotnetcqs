@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 
 namespace DotNetCqs.Queues.AdoNet
@@ -22,9 +21,8 @@ namespace DotNetCqs.Queues.AdoNet
             Body = bodyStr;
             Properties.Add("X-ContentType", contentType);
 
-            Claims = principal != null
-                ? principal.Claims.Select(x => new ClaimDto(x)).ToList()
-                : new List<ClaimDto>();
+
+            ClaimIdentity = principal == null ? null : new IdentityDto((ClaimsIdentity) principal.Identity);
         }
 
         protected AdoNetMessageDto()
@@ -33,7 +31,8 @@ namespace DotNetCqs.Queues.AdoNet
 
         public string Body { get; set; }
 
-        public List<ClaimDto> Claims { get; set; }
+        public IdentityDto ClaimIdentity { get; set; }
+
         public IDictionary<string, string> Properties { get; set; }
 
         public void ToMessage(IMessageSerializer<string> serializer, out Message message, out ClaimsPrincipal principal)
@@ -42,9 +41,9 @@ namespace DotNetCqs.Queues.AdoNet
 
             var body = serializer.Deserialize(contenType, Body);
             var props = new Dictionary<string, string>(Properties);
-            var claims = Claims.Select(x => x.ToClaim()).ToList();
+            var identity = ClaimIdentity?.ToIdentity();
 
-            principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
+            principal = identity != null ? new ClaimsPrincipal(identity) : null;
             message = new Message(body, props)
             {
                 MessageId = Guid.Parse(props["X-MessageId"])
