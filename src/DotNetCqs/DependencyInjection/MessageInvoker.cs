@@ -17,6 +17,17 @@ namespace DotNetCqs.DependencyInjection
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
+        /// <summary>
+        ///     Create a task per handler and invoke them in parallel.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Activate this option if you are sure of that all handlers work with different (database) resources, or you'll
+        ///         sooner or later get deadlocks.
+        ///     </para>
+        /// </remarks>
+        public bool InvokeHandlersInParallel { get; set; }
+
         public async Task ProcessAsync(IInvocationContext context, Message message)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
@@ -83,6 +94,7 @@ namespace DotNetCqs.DependencyInjection
             if (handlers.Count == 0)
             {
                 var e = new HandlerMissingEventArgs(context.Principal, message, _scope);
+                HandlerMissing?.Invoke(this, e);
                 if (e.Handler != null)
                     handlers.Add(e.Handler);
                 else if (e.ThrowException)
@@ -90,57 +102,97 @@ namespace DotNetCqs.DependencyInjection
                 else
                     return;
             }
-                
 
-            var tasks = handlers.Select(async handler =>
+
+            if (InvokeHandlersInParallel)
             {
-                var mi = handler.GetType().GetMethod("HandleAsync");
-                var task = (Task) mi.Invoke(handler, new[] {context, message.Body});
-                Stopwatch sw = null;
-                var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
+                var tasks = handlers.Select(async handler =>
+                {
+                    var mi = handler.GetType().GetMethod("HandleAsync");
+                    var task = (Task) mi.Invoke(handler, new[] {context, message.Body});
+                    Stopwatch sw = null;
+                    var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
+                    try
+                    {
+                        if (HandlerInvoked != null)
+                            sw = Stopwatch.StartNew();
+
+                        InvokingHandler?.Invoke(this, args1);
+                        await task;
+                        sw?.Stop();
+                        HandlerInvoked?.Invoke(this,
+                            new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero));
+                    }
+                    catch (Exception ex)
+                    {
+                        var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
+                            sw?.Elapsed ?? TimeSpan.Zero)
+                        {
+                            Exception = ex
+                        };
+                        HandlerInvoked?.Invoke(this, e);
+
+                        ExceptionDispatchInfo.Capture(ex).Throw();
+                    }
+                }).ToArray();
+
                 try
                 {
-                    if (HandlerInvoked != null)
-                        sw = Stopwatch.StartNew();
-
-                    InvokingHandler?.Invoke(this, args1);
-                    await task;
-                    sw?.Stop();
-                    HandlerInvoked?.Invoke(this,
-                        new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero));
+                    await Task.WhenAll(tasks);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
-                        sw?.Elapsed ?? TimeSpan.Zero)
+                    var failedHandlers = new List<FailedHandler>();
+                    for (var i = 0; i < handlers.Count; i++)
                     {
-                        Exception = ex
-                    };
-                    HandlerInvoked?.Invoke(this, e);
-
-                    ExceptionDispatchInfo.Capture(ex).Throw();
+                        var task = tasks[i];
+                        var handler = handlers[i];
+                        if (task.IsFaulted)
+                            failedHandlers.Add(new FailedHandler
+                            {
+                                Exception = task.Exception.InnerException,
+                                HandlerType = handler.GetType()
+                            });
+                    }
+                    throw new HandlersFailedException(message, failedHandlers);
                 }
-            }).ToArray();
 
-            try
-            {
-                await Task.WhenAll(tasks);
             }
-            catch (Exception)
+            else
             {
                 var failedHandlers = new List<FailedHandler>();
-                for (var i = 0; i < handlers.Count; i++)
+                foreach (var handler in handlers)
                 {
-                    var task = tasks[i];
-                    var handler = handlers[i];
-                    if (task.IsFaulted)
-                        failedHandlers.Add(new FailedHandler
+                    var mi = handler.GetType().GetMethod("HandleAsync");
+                    var task = (Task)mi.Invoke(handler, new[] { context, message.Body });
+                    Stopwatch sw = null;
+                    var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
+                    try
+                    {
+                        if (HandlerInvoked != null)
+                            sw = Stopwatch.StartNew();
+
+                        InvokingHandler?.Invoke(this, args1);
+                        await task;
+                        sw?.Stop();
+                        HandlerInvoked?.Invoke(this,
+                            new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero));
+                    }
+                    catch (Exception ex)
+                    {
+                        var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
+                            sw?.Elapsed ?? TimeSpan.Zero)
                         {
-                            Exception = task.Exception.InnerException,
-                            HandlerType = handler.GetType()
-                        });
+                            Exception = ex
+                        };
+                        HandlerInvoked?.Invoke(this, e);
+                        failedHandlers.Add(new FailedHandler(){Exception = ex, HandlerType = handlers.GetType()});
+                    }
+
                 }
-                throw new HandlersFailedException(message, failedHandlers);
+
+                if (failedHandlers.Any())
+                    throw new HandlersFailedException(message, failedHandlers);
             }
         }
 
