@@ -4,11 +4,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers
 {
-    public class DatabaseFixture : IDisposable
+    public class TempTableFixture : IDisposable
     {
         private readonly SqlConnection _connection;
 
-        public DatabaseFixture()
+        public TempTableFixture()
         {
             var builder = new ConfigurationBuilder().AddJsonFile("TestSettings.json");
             Configuration = builder.Build();
@@ -38,6 +38,14 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers
         public IConfigurationRoot Configuration { get; private set; }
 
         public string TableName { get; private set; }
+
+        public SqlConnection OpenConnection()
+        {
+            var connection = new SqlConnection();
+            connection.ConnectionString = Configuration.GetConnectionString("TestDb");
+            connection.Open();
+            return connection;
+        }
 
         public SqlConnection Connection
         {

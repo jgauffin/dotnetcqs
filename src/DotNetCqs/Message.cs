@@ -33,12 +33,12 @@ namespace DotNetCqs
         /// <param name="properties">Properties to attach</param>
         /// <exception cref="ArgumentNullException">body</exception>
         /// <exception cref="ArgumentException">Tried to wrap a <see cref="Message" /> in a <see cref="Message" /></exception>
-        public Message(object body, IDictionary<string,string> properties)
+        public Message(object body, IDictionary<string, string> properties)
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (body is Message)
                 throw new ArgumentException("Cannot wrap a Message in a Message, (inner type: " +
-                                            ((Message)body).Body + ").");
+                                            ((Message) body).Body + ").");
 
             MessageId = GuidFactory.Create();
             Body = body ?? throw new ArgumentNullException(nameof(body));
@@ -47,7 +47,6 @@ namespace DotNetCqs
 
         protected Message()
         {
-            
         }
 
         /// <summary>
@@ -86,7 +85,8 @@ namespace DotNetCqs
         ///         Format depends on the queue implementation
         ///     </para>
         ///     <para>
-        ///         Used when a message requires a reply.
+        ///         Used when a message requires a reply. Also set for replies (indicated by <see cref="CorrelationId" />) to tell
+        ///         which queue the reply should be delivered to.
         ///     </para>
         /// </remarks>
         public string ReplyQueue { get; set; }

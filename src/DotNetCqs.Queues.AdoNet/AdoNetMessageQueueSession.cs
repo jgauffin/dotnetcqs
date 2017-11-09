@@ -25,6 +25,17 @@ namespace DotNetCqs.Queues.AdoNet
         }
 
 
+        public AdoNetMessageQueueSession(string tableName, string queueName, IDbTransaction transaction,
+            IMessageSerializer<string> messageSerializer)
+        {
+            _messageSerializer = messageSerializer;
+            _tableName = tableName ?? throw new ArgumentNullException(nameof(tableName));
+            _queueName = queueName ?? throw new ArgumentNullException(nameof(queueName));
+            _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
+            _connection = transaction.Connection;
+        }
+
+
         public Task<Message> Dequeue(TimeSpan suggestedWaitTime)
         {
             var id = 0;
@@ -92,7 +103,7 @@ namespace DotNetCqs.Queues.AdoNet
             return new DequeuedMessage(principal, message);
         }
 
-        public Task EnqueueAsync(ClaimsPrincipal user, IReadOnlyList<Message> messages)
+        public Task EnqueueAsync(ClaimsPrincipal user, IReadOnlyCollection<Message> messages)
         {
             foreach (var msg in messages)
             {
@@ -103,7 +114,7 @@ namespace DotNetCqs.Queues.AdoNet
             return Task.FromResult<object>(null);
         }
 
-        public Task EnqueueAsync(IReadOnlyList<Message> messages)
+        public Task EnqueueAsync(IReadOnlyCollection<Message> messages)
         {
             foreach (var msg in messages)
             {

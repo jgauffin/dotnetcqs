@@ -12,7 +12,7 @@ namespace DotNetCqs.DependencyInjection
     /// <remarks>
     /// </remarks>
     /// <seealso cref="IMessageInvoker" />
-    public class MessageInvocationContext : IMessageContext
+    public class MessageInvocationContext : IMessageContext, IOutboundMessages
     {
         private readonly IMessageInvoker _messageInvoker;
         private readonly List<Message> _outboundMessages = new List<Message>();
@@ -34,8 +34,8 @@ namespace DotNetCqs.DependencyInjection
             MessageId = message.MessageId;
         }
 
-        public IReadOnlyList<Message> OutboundMessages => _outboundMessages;
-        public IReadOnlyList<Message> Replies => _replies;
+        public IList<Message> OutboundMessages => _outboundMessages;
+        public IList<Message> Replies => _replies;
 
         public Guid MessageId { get; }
         public IDictionary<string, string> Properties { get; set; }

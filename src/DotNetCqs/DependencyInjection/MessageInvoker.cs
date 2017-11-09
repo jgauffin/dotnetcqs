@@ -5,18 +5,28 @@ using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using DotNetCqs.MessageProcessor;
+using DotNetCqs.Queues;
 
 namespace DotNetCqs.DependencyInjection
 {
     public class MessageInvoker : IMessageInvoker
     {
         private readonly IHandlerScope _scope;
+        private IOutboundMessageHandler _outboundMessageHandler;
+        public LoggerHandler Logger;
 
         public MessageInvoker(IHandlerScope scope)
         {
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
+        public MessageInvoker(IHandlerScope scope, IOutboundMessageHandler outboundMessageHandler)
+        {
+            _outboundMessageHandler = outboundMessageHandler;
+            _scope = scope ?? throw new ArgumentNullException(nameof(scope));
+        }
+
+        
         public async Task ProcessAsync(IInvocationContext context, Message message)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
@@ -31,10 +41,25 @@ namespace DotNetCqs.DependencyInjection
             else
                 await InvokeMessageHandlers(messageContext, message);
 
+
+            // someone else is taking care of the outbound messages
+            if (_outboundMessageHandler != null)
+            {
+                Logger?.Invoke(LogLevel.Debug, "", "Invoking IOutboundMessageHandler.");
+                await _outboundMessageHandler.SendAsync(messageContext);
+            }
             foreach (var msg in messageContext.OutboundMessages)
+            {
+                Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), $"Sending {msg.Body.GetType()}");
                 await context.SendAsync(msg);
+            }
+
             foreach (var msg in messageContext.Replies)
+            {
+                Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), $"Replying with {msg.Body.GetType()}");
                 await context.ReplyAsync(msg);
+            }
+                
         }
 
         public Task ProcessAsync(IInvocationContext context, object message)
@@ -82,7 +107,9 @@ namespace DotNetCqs.DependencyInjection
             var handlers = _scope.Create(type).ToList();
             if (handlers.Count == 0)
             {
+                Logger?.Invoke(LogLevel.Warning, message.MessageId.ToString("N"), "Missing handler for " + message.Body.GetType());
                 var e = new HandlerMissingEventArgs(context.Principal, message, _scope);
+                HandlerMissing?.Invoke(this, e);
                 if (e.Handler != null)
                     handlers.Add(e.Handler);
                 else if (e.ThrowException)
@@ -103,6 +130,7 @@ namespace DotNetCqs.DependencyInjection
                     if (HandlerInvoked != null)
                         sw = Stopwatch.StartNew();
 
+                    Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), "Invoking " + handler.GetType());
                     InvokingHandler?.Invoke(this, args1);
                     await task;
                     sw?.Stop();
@@ -111,6 +139,8 @@ namespace DotNetCqs.DependencyInjection
                 }
                 catch (Exception ex)
                 {
+                    Logger?.Invoke(LogLevel.Error, message.MessageId.ToString("N"),
+                        $"Handler failed: {handler.GetType()}, Exception: {ex}");
                     var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
                         sw?.Elapsed ?? TimeSpan.Zero)
                     {

@@ -40,13 +40,13 @@ namespace DotNetCqs.Queues
         /// </summary>
         /// <param name="principal">Principal that should be attached with the message (typically the logged in principal).</param>
         /// <param name="messages">Messages that was enqueued by the current message handler</param>
-        Task EnqueueAsync(ClaimsPrincipal principal, IReadOnlyList<Message> messages);
+        Task EnqueueAsync(ClaimsPrincipal principal, IReadOnlyCollection<Message> messages);
 
         /// <summary>
         ///     Enqueue message so that they can be processed later.
         /// </summary>
         /// <param name="messages">Messages that was enqueued by the current message handler</param>
-        Task EnqueueAsync(IReadOnlyList<Message> messages);
+        Task EnqueueAsync(IReadOnlyCollection<Message> messages);
 
         /// <summary>
         ///     Enqueue message so that they can be processed later.

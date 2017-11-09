@@ -36,7 +36,7 @@ namespace DotNetCqs.Azure.ServiceBus
             return new DequeuedMessage(tuple.Item1, tuple.Item2);
         }
 
-        public Task EnqueueAsync(ClaimsPrincipal principal, IReadOnlyList<Message> messages)
+        public Task EnqueueAsync(ClaimsPrincipal principal, IReadOnlyCollection<Message> messages)
         {
             foreach (var message in messages)
             {
@@ -46,7 +46,7 @@ namespace DotNetCqs.Azure.ServiceBus
             return Task.CompletedTask;
         }
 
-        public Task EnqueueAsync(IReadOnlyList<Message> messages)
+        public Task EnqueueAsync(IReadOnlyCollection<Message> messages)
         {
             foreach (var message in messages)
             {

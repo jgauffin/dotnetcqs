@@ -16,7 +16,10 @@ namespace DotNetCqs.Queues.AdoNet
             _connectionFactory = connectionFactory;
             _messageSerializer = messageSerializer;
             TableName = "MessageQueue";
+            IsolationLevel = IsolationLevel.Unspecified;
         }
+
+        public IsolationLevel IsolationLevel { get; set; }
 
         public string TableName { get; set; }
 
@@ -25,7 +28,11 @@ namespace DotNetCqs.Queues.AdoNet
         public IMessageQueueSession BeginSession()
         {
             var connection = _connectionFactory();
-            return new AdoNetMessageQueueSession(TableName, Name, connection, _messageSerializer);
+            if (IsolationLevel == IsolationLevel.Unspecified)
+                return new AdoNetMessageQueueSession(TableName, Name, connection, _messageSerializer);
+
+            var transaction = _connectionFactory().BeginTransaction(IsolationLevel);
+            return new AdoNetMessageQueueSession(TableName, Name, transaction, _messageSerializer);
         }
     }
 }
