@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs</RootNamespace>
-    <Version>2.0.3.8</Version>
+    <Version>2.0.3.9</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
   </PropertyGroup>
