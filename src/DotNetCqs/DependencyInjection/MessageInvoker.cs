@@ -12,7 +12,7 @@ namespace DotNetCqs.DependencyInjection
     public class MessageInvoker : IMessageInvoker
     {
         private readonly IHandlerScope _scope;
-        private IOutboundMessageHandler _outboundMessageHandler;
+        private IOutboundMessageRouter _outboundMessageRouter;
         public LoggerHandler Logger;
 
         public MessageInvoker(IHandlerScope scope)
@@ -20,9 +20,9 @@ namespace DotNetCqs.DependencyInjection
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
-        public MessageInvoker(IHandlerScope scope, IOutboundMessageHandler outboundMessageHandler)
+        public MessageInvoker(IHandlerScope scope, IOutboundMessageRouter outboundMessageRouter)
         {
-            _outboundMessageHandler = outboundMessageHandler;
+            _outboundMessageRouter = outboundMessageRouter;
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
@@ -54,10 +54,10 @@ namespace DotNetCqs.DependencyInjection
 
 
             // someone else is taking care of the outbound messages
-            if (_outboundMessageHandler != null)
+            if (_outboundMessageRouter != null)
             {
-                Logger?.Invoke(LogLevel.Debug, "", "Invoking IOutboundMessageHandler.");
-                await _outboundMessageHandler.SendAsync(messageContext);
+                Logger?.Invoke(LogLevel.Debug, "", "Invoking IOutboundMessageRouter.");
+                await _outboundMessageRouter.SendAsync(messageContext);
             }
             foreach (var msg in messageContext.OutboundMessages)
             {

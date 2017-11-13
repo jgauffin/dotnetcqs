@@ -30,8 +30,8 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest
             var scope1 = Substitute.For<IHandlerScope>();
             var scope2 = Substitute.For<IHandlerScope>();
             var upgrade = new LogAdminUpgrades(evt);
-            var inboundQueue = _fixture.OpenQueue("inbound");
-            var outboundQueue = _fixture.OpenQueue("outbound");
+            var inboundQueue = _fixture.OpenQueue("inbound", true);
+            var outboundQueue = _fixture.OpenQueue("outbound", true);
             scopeFactory1.CreateScope().Returns(scope1);
             scopeFactory2.CreateScope().Returns(scope2);
             scope1.ResolveDependency<IMessageInvoker>().Returns(new[] { new MessageInvoker(scope1) });

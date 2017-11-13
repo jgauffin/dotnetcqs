@@ -18,19 +18,19 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_queue_message()
         {
-            var session = _fixture.OpenSession("qm1");
+            var session = _fixture.OpenSession("qm1", true);
             await session.EnqueueAsync(new Message("Hello world"));
             await session.SaveChanges();
 
             var row = _fixture.GetFirstRow("qm1");
             row.Should().NotBeEmpty();
-            row["QueueName"].Should().Be("myQueue");
+            row["QueueName"].Should().Be("qm1");
         }
 
         [Fact]
         public async Task Should_be_able_to_dequeue_message()
         {
-            var session = _fixture.OpenSession("qm2");
+            var session = _fixture.OpenSession("qm2", true);
             await session.EnqueueAsync(new Message("Hello world"));
             await session.SaveChanges();
 
@@ -45,24 +45,21 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_open_two_transactions_on_same_Table_To_simulate_the_usage_of_the_same_table_for_inbound_and_outbound_queues()
         {
-            var session = _fixture.OpenSession("qm3");
+            var session = _fixture.OpenSession("qm3", true);
             using (var session1 = _fixture.OpenSession("qm3"))
             {
                 await session1.EnqueueAsync(new Message("Hello world"));
                 await session1.SaveChanges();
             }
 
-            //var msg = await session.Dequeue(TimeSpan.FromSeconds(1));
-            using (var mySession = _fixture.OpenSession("qm3"))
+            await session.Dequeue(TimeSpan.FromSeconds(1));
+            using (var session1 = _fixture.OpenSession("qm3"))
             {
-                await mySession.EnqueueAsync(new Message("Hello world"));
-                await mySession.SaveChanges();
+                await session1.EnqueueAsync(new Message("Hello world"));
+                await session1.SaveChanges();
             }
 
-
-            var row = _fixture.GetFirstRow("qm1");
-            row.Should().BeEmpty();
-            //msg.Body.Should().Be("Hello world");
+            await session.SaveChanges();
         }
 
         public void Dispose()

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs", "DotNetCqs\DotNetCqs.csproj", "{17D91889-302A-4DDF-9BD8-C1DF04B549B8}"
 EndProject
@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.DependencyInjecti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Azure.ServiceBus", "DotNetCqs.Azure.ServiceBus\DotNetCqs.Azure.ServiceBus.csproj", "{EDBE1001-4335-4F2A-BA63-02A963AC8E50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Queues.AdoNet", "DotNetCqs.Queues.AdoNet\DotNetCqs.Queues.AdoNet.csproj", "{FDFCE6C6-3909-4B85-B969-3C97697C1E84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet", "DotNetCqs.Queues.AdoNet\DotNetCqs.Queues.AdoNet.csproj", "{FDFCE6C6-3909-4B85-B969-3C97697C1E84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Queues.AdoNet.IntegrationTests", "DotNetCqs.AdoNet.IntegrationTests\DotNetCqs.Queues.AdoNet.IntegrationTests.csproj", "{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet.IntegrationTests", "DotNetCqs.AdoNet.IntegrationTests\DotNetCqs.Queues.AdoNet.IntegrationTests.csproj", "{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Queues.Files", "DotNetCqs.Queues.Files\DotNetCqs.Queues.Files.csproj", "{E2F1CD3E-B934-4FB2-BA09-FFD5828F5C32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2F1CD3E-B934-4FB2-BA09-FFD5828F5C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2F1CD3E-B934-4FB2-BA09-FFD5828F5C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2F1CD3E-B934-4FB2-BA09-FFD5828F5C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2F1CD3E-B934-4FB2-BA09-FFD5828F5C32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,6 +12,7 @@ namespace DotNetCqs.Queues.AdoNet
         private readonly string _queueName;
         private readonly string _tableName;
         private IDbConnection _connection;
+        private bool _dequeued;
         private IDbTransaction _transaction;
 
         public AdoNetMessageQueueSession(string tableName, string queueName, IDbConnection connection,
@@ -38,6 +39,8 @@ namespace DotNetCqs.Queues.AdoNet
 
         public Task<Message> Dequeue(TimeSpan suggestedWaitTime)
         {
+            EnsureNotDequeued();
+
             var id = 0;
             AdoNetMessageDto msg;
             using (var cmd = _connection.CreateCommand())
@@ -64,11 +67,14 @@ namespace DotNetCqs.Queues.AdoNet
             }
 
             msg.ToMessage(_messageSerializer, out var message, out var user);
+            msg.Properties["X-AdoNet-Id"] = id.ToString();
             return Task.FromResult(message);
         }
 
         public async Task<DequeuedMessage> DequeueWithCredentials(TimeSpan suggestedWaitTime)
         {
+            EnsureNotDequeued();
+
             int id;
             AdoNetMessageDto msg;
             using (var cmd = _connection.CreateCommand())
@@ -100,6 +106,7 @@ namespace DotNetCqs.Queues.AdoNet
             }
 
             msg.ToMessage(_messageSerializer, out var message, out var principal);
+            msg.Properties["X-AdoNet-Id"] = id.ToString();
             return new DequeuedMessage(principal, message);
         }
 
@@ -158,6 +165,14 @@ namespace DotNetCqs.Queues.AdoNet
             _transaction = null;
             _connection?.Dispose();
             _connection = null;
+        }
+
+        private void EnsureNotDequeued()
+        {
+            if (_dequeued)
+                throw new NotSupportedException(
+                    "The ADO.NET queue do not support multiple dequeues in the same message scope. It's because we use 'SELECT TOP(1)' internally which means that the same message is returned every time until the internal transaction is comitted.");
+            _dequeued = true;
         }
 
         private void InsertMessage(string json, string typeName)

@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace DotNetCqs.DependencyInjection
+namespace DotNetCqs.MessageProcessor
 {
     /// <summary>
     ///     Deliver messages that have been enqueued by an invoked <see cref="IMessageHandler{TMessage}" />.
     /// </summary>
-    public interface IOutboundMessageHandler
+    public interface IOutboundMessageRouter
     {
         /// <summary>
         ///     Deliver all or some of the messages manually.

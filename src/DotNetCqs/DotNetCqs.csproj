@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs</RootNamespace>
-    <Version>2.0.3.9</Version>
+    <Version>2.0.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
   </PropertyGroup>
@@ -14,11 +14,7 @@
     <Description>Command/Query abstraction library for .NET applications.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-      Published version 2.0. Breaking changes. All old interfaces are retired.
-      New minimal interfaces and abstractions to be able to
-      handle authorization and other context data which otherwise is hard to supply for asynchronous applications.
-
-      Forgot to rename namespaces on imported classes.
+      Improved poison message handling in QueueListener.
     </PackageReleaseNotes>
     <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction</PackageTags>
@@ -29,6 +25,10 @@
   
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Queues\Files\" />
   </ItemGroup>
 
 

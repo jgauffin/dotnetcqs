@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DotNetCqs.DependencyInjection
+namespace DotNetCqs.MessageProcessor
 {
     public interface IOutboundMessages: IMessageContext
     {

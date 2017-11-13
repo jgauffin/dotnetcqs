@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using DotNetCqs.Queues;
-using DotNetCqs.Queues.AdoNet;
 using Microsoft.ServiceBus.Messaging;
 
 namespace DotNetCqs.Azure.ServiceBus

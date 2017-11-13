@@ -78,3 +78,10 @@ public class JsonMessageQueueSerializer : IMessageSerializer
         }
     }
 }
+
+
+Important Gotchas
+=================
+
+* Keep number of queues per table low, or you'll get deadlocks on the table.
+* Only use one QueueListener per queue.

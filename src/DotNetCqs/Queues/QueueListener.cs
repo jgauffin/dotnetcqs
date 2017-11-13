@@ -70,10 +70,14 @@ namespace DotNetCqs.Queues
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public Task ReceiveSingleMessageAsync()
+        public async Task ReceiveSingleMessageAsync()
         {
             var wrapper = new MsgWrapper();
-            return ReceiveSingleMessageAsync(wrapper);
+            using (var session = _queue.BeginSession())
+            {
+                await ReceiveSingleMessageAsync(wrapper, session);
+                await session.SaveChanges();
+            }
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -81,26 +85,37 @@ namespace DotNetCqs.Queues
             var wrapper = new MsgWrapper();
             while (!token.IsCancellationRequested)
             {
-                try
+                using (var session = _queue.BeginSession())
                 {
-                    await ReceiveSingleMessageAsync(wrapper);
-                }
-                catch (Exception ex)
-                {
-                    Logger?.Invoke(LogLevel.Warning, _queue.Name, "Message handling failed, attempt: " + wrapper.AttemptCount + ", " + ex);
-
-                    if (RetryAttempts.Length > wrapper.AttemptCount)
-                        await Task.Delay(RetryAttempts[wrapper.AttemptCount], token);
-                    else if (RetryAttempts.Length == 0)
-                        await Task.Delay(1000, token);
-                    else
+                    try
                     {
-                        Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message.");
-                        using (var session = _queue.BeginSession())
+                        await ReceiveSingleMessageAsync(wrapper, session);
+                        await session.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger?.Invoke(LogLevel.Warning, _queue.Name,
+                            "Message handling failed, attempt: " + wrapper.AttemptCount + ", " + ex);
+
+                        // do not retry at all, consume invalid messages
+                        if (RetryAttempts.Length == 0)
                         {
-                            var msg = await session.DequeueWithCredentials(TimeSpan.FromSeconds(1));
                             PoisonMessageDetected?.Invoke(this,
-                                new PoisonMessageEventArgs(msg.Principal, msg.Message, ex));
+                                new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
+                            await session.SaveChanges();
+                            await Task.Delay(1000, token);
+                        }
+                        else if (wrapper.AttemptCount < RetryAttempts.Length)
+                        {
+                            session.Dispose();
+                            await Task.Delay(RetryAttempts[wrapper.AttemptCount], token);
+                        }
+                        else
+                        {
+                            Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message.");
+
+                            PoisonMessageDetected?.Invoke(this,
+                                new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
                             await session.SaveChanges();
                         }
                     }
@@ -143,47 +158,55 @@ namespace DotNetCqs.Queues
                 await _outboundRouter.SendAsync(msg.Principal, outboundMessages);
         }
 
-        private async Task ReceiveSingleMessageAsync(MsgWrapper wrapper)
+        private async Task ReceiveSingleMessageAsync(MsgWrapper wrapper, IMessageQueueSession session)
         {
-            using (var session = _queue.BeginSession())
+            var msg = await session.DequeueWithCredentials(TimeSpan.FromSeconds(1));
+            if (msg == null)
             {
-                var msg = await session.DequeueWithCredentials(TimeSpan.FromSeconds(1));
-                if (msg == null)
-                {
-                    await session.SaveChanges();
-                    wrapper.Clear();
-                    await Task.Delay(100);
-                    return;
-                }
-
-                if (msg.Principal != null)
-                    Logger?.Invoke(LogLevel.Info, _queue.Name, $"Received[{msg.Principal.Identity.Name}]: {msg.Message.Body}");
-                else
-                    Logger?.Invoke(LogLevel.Info, _queue.Name, $"Received[Anonymous]: {msg.Message.Body}");
-                wrapper.Assign(msg.Message.MessageId);
-                await ProcessMessageAsync(msg);
-                await session.SaveChanges();
+                wrapper.Clear();
+                await Task.Delay(100);
+                return;
             }
+
+            if (msg.Principal != null)
+                Logger?.Invoke(LogLevel.Info, _queue.Name,
+                    $"Received[{msg.Principal.Identity.Name}]: {msg.Message.Body}");
+            else
+                Logger?.Invoke(LogLevel.Info, _queue.Name, $"Received[Anonymous]: {msg.Message.Body}");
+
+            wrapper.Assign(msg, _retryAttempts.Length);
+            await ProcessMessageAsync(msg);
         }
 
         private class MsgWrapper
         {
+            private int _maxAttempts;
+            private DequeuedMessage _message;
+
             /// <summary>
             ///     0 when first attempt is made.
             /// </summary>
             public int AttemptCount { get; private set; }
 
-            public Guid Id { get; private set; }
+            public Guid Id => Message?.Message.MessageId ?? Guid.Empty;
 
-            public void Assign(Guid id)
+            public bool IsLastAttempt => AttemptCount >= _maxAttempts;
+
+            public DequeuedMessage Message
             {
-                if (Id == id)
+                get { return _message; }
+            }
+
+            public void Assign(DequeuedMessage message, int maxAttempts)
+            {
+                if (Id == message.Message.MessageId)
                 {
                     AttemptCount++;
                 }
                 else
                 {
-                    Id = id;
+                    _maxAttempts = maxAttempts;
+                    _message = message;
                     AttemptCount = 0;
                 }
             }
@@ -191,7 +214,7 @@ namespace DotNetCqs.Queues
             public void Clear()
             {
                 AttemptCount = 0;
-                Id = Guid.Empty;
+                _message = null;
             }
         }
     }

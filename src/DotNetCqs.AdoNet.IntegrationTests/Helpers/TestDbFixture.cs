@@ -30,9 +30,9 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers
             _sessions.Clear();
         }
 
-        public Dictionary<string, object> GetFirstRow(string queueName)
+        public Dictionary<string, object> GetFirstRow(string queueName, bool deleteExistingItems = false)
         {
-            using (var connnection = OpenConnection(queueName))
+            using (var connnection = OpenConnection(queueName, deleteExistingItems))
             {
                 return connnection.QueryRow($"SELECT TOP(1) * FROM MessageQueues WHERE QueueName = '{queueName}'");
             }
@@ -58,13 +58,18 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers
                 new JsonSerializer())
             {
                 TableName = "MessageQueues",
-                IsolationLevel = IsolationLevel.RepeatableRead
+                IsolationLevel = IsolationLevel.Serializable
             };
         }
 
         public AdoNetMessageQueueSession OpenSession(string queueName, bool deleteExistingMessages = false)
         {
             return (AdoNetMessageQueueSession) OpenQueue(queueName, deleteExistingMessages).BeginSession();
+        }
+
+        public void ClearQueue(string queueName)
+        {
+            OpenConnection(queueName, true).Close();
         }
     }
 }

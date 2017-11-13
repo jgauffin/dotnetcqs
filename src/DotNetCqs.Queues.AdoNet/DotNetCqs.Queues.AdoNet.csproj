@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs.Queues.AdoNet</RootNamespace>
-    <Version>1.0.1</Version>
+    <Version>1.0.3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
   </PropertyGroup>
@@ -11,7 +11,7 @@
   <PropertyGroup>
     <PackageId>DotNetCqs.Queues.AdoNet</PackageId>
     <Authors>jgauffin</Authors>
-    <Description>ADO.NET based queues for DotNetCqs.</Description>
+    <Description>Improvments regarding poison messages.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
       Are now transporting authenticationType in the claim identity DTO
