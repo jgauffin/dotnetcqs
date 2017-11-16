@@ -31,7 +31,7 @@ namespace DotNetCqs.Queues.AdoNet
             if (IsolationLevel == IsolationLevel.Unspecified)
                 return new AdoNetMessageQueueSession(TableName, Name, connection, _messageSerializer);
 
-            var transaction = _connectionFactory().BeginTransaction(IsolationLevel);
+            var transaction = connection.BeginTransaction(IsolationLevel);
             return new AdoNetMessageQueueSession(TableName, Name, transaction, _messageSerializer);
         }
     }

@@ -47,7 +47,7 @@ namespace DotNetCqs.Queues.AdoNet
             using (var cmd = _connection.CreateCommand())
             {
                 cmd.Transaction = _transaction;
-                cmd.CommandText = $"SELECT TOP(1) Id, Body FROM {_tableName} WHERE QueueName = @name";
+                cmd.CommandText = $"SELECT TOP(1) Id, Body FROM {_tableName} WITH (READPAST) WHERE QueueName = @name";
                 cmd.AddParameter("name", _queueName);
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -81,7 +81,7 @@ namespace DotNetCqs.Queues.AdoNet
             using (var cmd = _connection.CreateCommand())
             {
                 cmd.Transaction = _transaction;
-                cmd.CommandText = $"SELECT TOP(1) Id, Body FROM {_tableName} WHERE QueueName = @name";
+                cmd.CommandText = $"SELECT TOP(1) Id, Body FROM {_tableName} WITH (READPAST) WHERE QueueName = @name";
                 cmd.AddParameter("name", _queueName);
                 using (var reader = cmd.ExecuteReader())
                 {

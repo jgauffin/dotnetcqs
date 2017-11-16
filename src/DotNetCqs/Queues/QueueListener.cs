@@ -91,6 +91,7 @@ namespace DotNetCqs.Queues
                     {
                         await ReceiveSingleMessageAsync(wrapper, session);
                         await session.SaveChanges();
+                        session.Dispose();
                         if (wrapper.Message == null)
                             await Task.Delay(100);
                     }
@@ -105,6 +106,7 @@ namespace DotNetCqs.Queues
                             PoisonMessageDetected?.Invoke(this,
                                 new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
                             await session.SaveChanges();
+                            session.Dispose();
                             await Task.Delay(1000, token);
                         }
                         else if (wrapper.AttemptCount < RetryAttempts.Length)

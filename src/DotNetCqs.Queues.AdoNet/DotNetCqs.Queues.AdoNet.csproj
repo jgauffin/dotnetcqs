@@ -3,19 +3,20 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs.Queues.AdoNet</RootNamespace>
-    <Version>1.0.3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
+    
+    <Version>1.0.4</Version>
+    <PackageReleaseNotes>
+      Using lock hints for reads
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>DotNetCqs.Queues.AdoNet</PackageId>
     <Authors>jgauffin</Authors>
-    <Description>Improvments regarding poison messages.</Description>
+    <Description>ADO.NET based queues for DotNetCqs.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>
-      Are now transporting authenticationType in the claim identity DTO
-    </PackageReleaseNotes>
     <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query adonet queues messaging</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
