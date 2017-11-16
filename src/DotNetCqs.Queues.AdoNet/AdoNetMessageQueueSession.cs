@@ -36,6 +36,7 @@ namespace DotNetCqs.Queues.AdoNet
             _connection = transaction.Connection;
         }
 
+        public LoggerHandler Logger;
 
         public Task<Message> Dequeue(TimeSpan suggestedWaitTime)
         {

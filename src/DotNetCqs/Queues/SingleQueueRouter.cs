@@ -28,6 +28,9 @@ namespace DotNetCqs.Queues
 
         public async Task SendAsync(IReadOnlyCollection<Message> messages)
         {
+            if (messages.Count == 0)
+                return;
+
             using (var session = _messageQueue.BeginSession())
             {
                 await session.EnqueueAsync(messages);
@@ -46,6 +49,9 @@ namespace DotNetCqs.Queues
 
         public async Task SendAsync(ClaimsPrincipal principal, IReadOnlyCollection<Message> messages)
         {
+            if (messages.Count == 0)
+                return;
+
             using (var session = _messageQueue.BeginSession())
             {
                 await session.EnqueueAsync(principal, messages);

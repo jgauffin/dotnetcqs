@@ -91,6 +91,8 @@ namespace DotNetCqs.Queues
                     {
                         await ReceiveSingleMessageAsync(wrapper, session);
                         await session.SaveChanges();
+                        if (wrapper.Message == null)
+                            await Task.Delay(100);
                     }
                     catch (Exception ex)
                     {
@@ -164,7 +166,6 @@ namespace DotNetCqs.Queues
             if (msg == null)
             {
                 wrapper.Clear();
-                await Task.Delay(100);
                 return;
             }
 

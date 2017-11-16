@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DotNetCqs.Queues;
@@ -76,6 +77,9 @@ namespace DotNetCqs.MessageProcessor
 
         public void DeliverMessages(IMessageQueue queue)
         {
+            if (_outboundMessages.Count == 0)
+                return;
+
             using (var scope = queue.BeginSession())
             {
                 scope.EnqueueAsync(Principal, _outboundMessages);

@@ -84,6 +84,29 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
             row.Should().BeEmpty();
         }
 
+        [Fact]
+        public async Task Should_only_invoke_handler_once()
+        {
+            SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
+            var token = new CancellationTokenSource();
+            var session = _fixture.OpenSession("QLInbound");
+            await session.EnqueueAsync(new Message("Hello world"));
+            await session.SaveChanges();
+            _messageInvoker.WhenForAnyArgs(x => x.ProcessAsync(null, null))
+                .Do(x => semaphore.Release());
+
+            _queueListener.RetryAttempts = new[] { TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10), };
+            _queueListener.Logger = (level, name, message) => Debug.WriteLine(message);
+            var t = _queueListener.RunAsync(token.Token).ConfigureAwait(false).GetAwaiter();
+            var actual = await semaphore.WaitAsync(500);
+
+
+            actual.Should().BeTrue();
+            var row = _fixture.GetFirstRow("QLInbound");
+            row.Should().BeEmpty();
+            
+        }
+
 
         public void Dispose()
         {
