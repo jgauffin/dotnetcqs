@@ -58,7 +58,7 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers
                 new JsonSerializer())
             {
                 TableName = "MessageQueues",
-                IsolationLevel = IsolationLevel.Serializable
+                IsolationLevel = IsolationLevel.RepeatableRead
             };
         }
 

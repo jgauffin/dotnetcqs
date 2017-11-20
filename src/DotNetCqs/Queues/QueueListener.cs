@@ -17,7 +17,7 @@ namespace DotNetCqs.Queues
         private readonly IMessageRouter _outboundRouter;
         private readonly IMessageQueue _queue;
         private readonly IHandlerScopeFactory _scopeFactory;
-        private TimeSpan[] _retryAttempts;
+        private TimeSpan[] _retryAttempts = new TimeSpan[0];
 
         public LoggerHandler Logger;
 
@@ -47,6 +47,12 @@ namespace DotNetCqs.Queues
             _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
             _queue = inboundQueue ?? throw new ArgumentNullException(nameof(inboundQueue));
         }
+
+        /// <summary>
+        /// Use a factory instead of the handler scope to create a message invoker.
+        /// </summary>
+        public Func<IHandlerScope, IMessageInvoker> MessageInvokerFactory { get; set; }
+
 
         /// <summary>
         ///     Intervals at which retries should be made for messages that can not be handled.
@@ -146,7 +152,9 @@ namespace DotNetCqs.Queues
                 var e = new ScopeCreatedEventArgs(scope, msg.Principal, msg.Message);
                 ScopeCreated?.Invoke(this, e);
 
-                var invoker = scope.ResolveDependency<IMessageInvoker>().First();
+                var invoker = MessageInvokerFactory == null
+                    ? scope.ResolveDependency<IMessageInvoker>().First()
+                    : MessageInvokerFactory(scope);
                 var context = new InvocationContext(_queue.Name, msg.Principal, invoker, outboundMessages);
 
                 Logger?.Invoke(LogLevel.Debug, _queue.Name, "Invoking message handler(s).");

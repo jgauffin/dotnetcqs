@@ -3,9 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs</RootNamespace>
-    <Version>2.0.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
+
+    <Version>2.0.7</Version>
+    <PackageReleaseNotes>
+      Can reply with NULL on queries.
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -13,9 +17,6 @@
     <Authors>jgauffin</Authors>
     <Description>Command/Query abstraction library for .NET applications.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>
-      Released locks when delays are required.
-    </PackageReleaseNotes>
     <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>

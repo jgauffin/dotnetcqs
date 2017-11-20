@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Messages;
 
-namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages
+namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Handlers
 {
     class UpgradeToAdminHandler : IMessageHandler<UserActivated>
     {

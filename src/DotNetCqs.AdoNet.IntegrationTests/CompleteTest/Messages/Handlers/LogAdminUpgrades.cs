@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Messages;
 
-namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages
+namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Handlers
 {
     public class LogAdminUpgrades : IMessageHandler<UserBecameAdmin>
     {

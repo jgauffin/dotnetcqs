@@ -3,10 +3,14 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCqs.DependencyInjection;
+using DotNetCqs.DependencyInjection.Microsoft;
 using DotNetCqs.MessageProcessor;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages;
+using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Handlers;
+using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Messages;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Xunit;
 
@@ -15,39 +19,41 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest
     public class ScenarioTest : IDisposable, IClassFixture<TestDbFixture>
     {
         TestDbFixture _fixture;
+        private ServiceProvider _serviceProvider;
 
         public ScenarioTest(TestDbFixture fixture)
         {
             this._fixture = fixture;
+            _fixture.ClearQueue("inbound");
+            _fixture.ClearQueue("outbound");
+
         }
 
         [Fact]
         public async Task Should_be_able_to_handle_a_message_flow()
         {
             ManualResetEvent evt = new ManualResetEvent(false);
-            var scopeFactory1 = Substitute.For<IHandlerScopeFactory>();
-            var scopeFactory2 = Substitute.For<IHandlerScopeFactory>();
-            var scope1 = Substitute.For<IHandlerScope>();
-            var scope2 = Substitute.For<IHandlerScope>();
             var upgrade = new LogAdminUpgrades(evt);
-            var inboundQueue = _fixture.OpenQueue("inbound", true);
-            var outboundQueue = _fixture.OpenQueue("outbound", true);
-            scopeFactory1.CreateScope().Returns(scope1);
-            scopeFactory2.CreateScope().Returns(scope2);
-            scope1.ResolveDependency<IMessageInvoker>().Returns(new[] { new MessageInvoker(scope1) });
-            scope2.ResolveDependency<IMessageInvoker>().Returns(new[] { new MessageInvoker(scope2) });
-            scope1.Create(typeof(IMessageHandler<ActivateUser>)).Returns(new[] { new ActivateUserHandler() });
-            scope2.Create(typeof(IMessageHandler<UserActivated>)).Returns(new[] { new UpgradeToAdminHandler() });
-            scope2.Create(typeof(IMessageHandler<UserBecameAdmin>)).Returns(new[] { upgrade });
+            var serviceProvider = new ServiceCollection()
+                .AddScoped<IMessageHandler<ActivateUser>, ActivateUserHandler>()
+                .AddScoped<IMessageHandler<UserActivated>, UpgradeToAdminHandler>()
+                .AddSingleton<IMessageHandler<UserBecameAdmin>>(upgrade)
+                .AddScoped<IQueryHandler<FindUser, FindUserResult>, FindUserHandler>()
+                .BuildServiceProvider();
+            var scopeFactory = new MicrosoftHandlerScopeFactory(serviceProvider);
+            var inboundQueue = _fixture.OpenQueue("inbound", false);
+            var outboundQueue = _fixture.OpenQueue("outbound", false);
             var token = new CancellationTokenSource();
             using (var session = inboundQueue.BeginSession())
             {
                 await session.EnqueueAsync(new Message(new ActivateUser()));
                 await session.SaveChanges();
             }
-            var listener1 = new QueueListener(inboundQueue, outboundQueue, scopeFactory1);
+            var listener1 = new QueueListener(inboundQueue, outboundQueue, scopeFactory);
+            listener1.MessageInvokerFactory=scope => new MessageInvoker(scope);
             listener1.Logger = (level, queue, msg) => Console.WriteLine($"{level} {queue} {msg}");
-            var listener2 = new QueueListener(outboundQueue, outboundQueue, scopeFactory2);
+            var listener2 = new QueueListener(outboundQueue, outboundQueue, scopeFactory);
+            listener2.MessageInvokerFactory = scope => new MessageInvoker(scope);
             listener2.Logger = (level, queue, msg) => Console.WriteLine($"{level} {queue} {msg}");
 
             var t1 = listener1.RunAsync(token.Token);

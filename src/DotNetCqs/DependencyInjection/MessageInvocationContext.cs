@@ -34,17 +34,16 @@ namespace DotNetCqs.DependencyInjection
             MessageId = message.MessageId;
         }
 
-        public IList<Message> OutboundMessages => _outboundMessages;
-        public IList<Message> Replies => _replies;
-
         public Guid MessageId { get; }
         public IDictionary<string, string> Properties { get; set; }
         public ClaimsPrincipal Principal { get; set; }
 
         public Task ReplyAsync(object message)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            var msg = new Message(message) {CorrelationId = MessageId};
+            var msg = message == null
+                ? Message.CreateReply(MessageId)
+                : Message.CreateReply(MessageId, message);
+
             _replies.Add(msg);
 #if NET452
             return Task.FromResult<object>(null);
@@ -76,5 +75,8 @@ namespace DotNetCqs.DependencyInjection
             var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker);
             return await ctx.QueryAsync(query);
         }
+
+        public IList<Message> OutboundMessages => _outboundMessages;
+        public IList<Message> Replies => _replies;
     }
 }

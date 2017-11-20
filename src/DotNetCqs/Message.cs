@@ -90,5 +90,33 @@ namespace DotNetCqs
         ///     </para>
         /// </remarks>
         public string ReplyQueue { get; set; }
+
+        /// <summary>
+        ///     Create a new reply.
+        /// </summary>
+        /// <param name="correlationId">Message id of the message that we are replying to.</param>
+        /// <param name="reply">Reply DTO</param>
+        /// <returns>message to send</returns>
+        public static Message CreateReply(Guid correlationId, object reply)
+        {
+            return new Message
+            {
+                CorrelationId = correlationId,
+                Body = reply
+            };
+        }
+
+        /// <summary>
+        ///     Create a new reply (typically for queries, we did not find the requested item).
+        /// </summary>
+        /// <param name="correlationId">Message id of the message that we are replying to.</param>
+        /// <returns>message to send</returns>
+        public static Message CreateReply(Guid correlationId)
+        {
+            return new Message
+            {
+                CorrelationId = correlationId
+            };
+        }
     }
 }

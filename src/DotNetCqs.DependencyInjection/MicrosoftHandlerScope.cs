@@ -18,9 +18,14 @@ namespace DotNetCqs.DependencyInjection.Microsoft
             _scope.Dispose();
         }
 
-        public IEnumerable<object> ResolveAll(Type messageHandlerType)
+        public IEnumerable<object> Create(Type messageHandlerServiceType)
         {
-            return _scope.ServiceProvider.GetServices(messageHandlerType);
+            return _scope.ServiceProvider.GetServices(messageHandlerServiceType);
+        }
+
+        public IEnumerable<T> ResolveDependency<T>()
+        {
+            return _scope.ServiceProvider.GetServices<T>();
         }
 
         public object Resolve(Type concreteHandlerType)
@@ -28,14 +33,9 @@ namespace DotNetCqs.DependencyInjection.Microsoft
             return _scope.ServiceProvider.GetService(concreteHandlerType);
         }
 
-        public IEnumerable<object> Create(Type messageHandlerServiceType)
+        public IEnumerable<object> ResolveAll(Type messageHandlerType)
         {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<T> ResolveDependency<T>()
-        {
-            throw new NotImplementedException();
+            return _scope.ServiceProvider.GetServices(messageHandlerType);
         }
     }
 }
