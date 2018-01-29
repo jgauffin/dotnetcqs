@@ -6,9 +6,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
 
-    <Version>2.0.7</Version>
+    <Version>2.0.8</Version>
     <PackageReleaseNotes>
-      Can reply with NULL on queries.
+      Removed a possible session related connection issue.
     </PackageReleaseNotes>
   </PropertyGroup>
 

@@ -91,43 +91,59 @@ namespace DotNetCqs.Queues
             var wrapper = new MsgWrapper();
             while (!token.IsCancellationRequested)
             {
-                using (var session = _queue.BeginSession())
+                try
                 {
-                    try
+                    //only error here is DB related.
+                    await HandleOneMessage(token, wrapper);
+                }
+                catch (Exception ex)
+                {
+                    Logger?.Invoke(LogLevel.Error, _queue.Name,
+                        "Message handling failed, " + ex);
+                    await Task.Delay(1000, token);
+                }
+                
+            }
+        }
+
+        private async Task HandleOneMessage(CancellationToken token, MsgWrapper wrapper)
+        {
+            using (var session = _queue.BeginSession())
+            {
+                try
+                {
+                    await ReceiveSingleMessageAsync(wrapper, session);
+                    await session.SaveChanges();
+                    session.Dispose();
+                    if (wrapper.Message == null)
+                        await Task.Delay(100);
+                }
+                catch (Exception ex)
+                {
+                    Logger?.Invoke(LogLevel.Warning, _queue.Name,
+                        "Message handling failed, attempt: " + wrapper.AttemptCount + ", " + ex);
+
+                    // do not retry at all, consume invalid messages
+                    if (RetryAttempts.Length == 0)
                     {
-                        await ReceiveSingleMessageAsync(wrapper, session);
+                        PoisonMessageDetected?.Invoke(this,
+                            new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
                         await session.SaveChanges();
                         session.Dispose();
-                        if (wrapper.Message == null)
-                            await Task.Delay(100);
+                        await Task.Delay(1000, token);
                     }
-                    catch (Exception ex)
+                    else if (wrapper.AttemptCount < RetryAttempts.Length)
                     {
-                        Logger?.Invoke(LogLevel.Warning, _queue.Name,
-                            "Message handling failed, attempt: " + wrapper.AttemptCount + ", " + ex);
+                        session.Dispose();
+                        await Task.Delay(RetryAttempts[wrapper.AttemptCount], token);
+                    }
+                    else
+                    {
+                        Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message.");
 
-                        // do not retry at all, consume invalid messages
-                        if (RetryAttempts.Length == 0)
-                        {
-                            PoisonMessageDetected?.Invoke(this,
-                                new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
-                            await session.SaveChanges();
-                            session.Dispose();
-                            await Task.Delay(1000, token);
-                        }
-                        else if (wrapper.AttemptCount < RetryAttempts.Length)
-                        {
-                            session.Dispose();
-                            await Task.Delay(RetryAttempts[wrapper.AttemptCount], token);
-                        }
-                        else
-                        {
-                            Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message.");
-
-                            PoisonMessageDetected?.Invoke(this,
-                                new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
-                            await session.SaveChanges();
-                        }
+                        PoisonMessageDetected?.Invoke(this,
+                            new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
+                        await session.SaveChanges();
                     }
                 }
             }

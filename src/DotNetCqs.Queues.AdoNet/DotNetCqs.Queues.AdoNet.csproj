@@ -6,9 +6,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
     
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <PackageReleaseNotes>
-      Using lock hints for reads
+      ADO.NET transaction isolation level can now be configured using AdoNetMessageQueueProvider.
     </PackageReleaseNotes>
   </PropertyGroup>
 

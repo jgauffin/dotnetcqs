@@ -19,12 +19,30 @@ namespace DotNetCqs.Queues.AdoNet
             IsolationLevel = IsolationLevel.Unspecified;
         }
 
+        /// <summary>
+        ///     Isolation level to use
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Default is unspecified (i.e. let the ADO.NET driver decide)
+        /// </para>
+        /// </remarks>
         public IsolationLevel IsolationLevel { get; set; }
 
+        /// <summary>
+        ///     Table which messages are read for
+        /// </summary>
         public string TableName { get; set; }
 
+        /// <summary>
+        ///     Name of the queue (to query the correct messages in the table)
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        ///     Creates a new session (represents an ADO.NET transaction in which a set of operations is made).
+        /// </summary>
+        /// <returns></returns>
         public IMessageQueueSession BeginSession()
         {
             var connection = _connectionFactory();
