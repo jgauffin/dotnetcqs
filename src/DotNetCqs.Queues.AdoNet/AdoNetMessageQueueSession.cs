@@ -67,6 +67,7 @@ namespace DotNetCqs.Queues.AdoNet
                 cmd.ExecuteNonQuery();
             }
 
+
             msg.ToMessage(_messageSerializer, out var message, out var user);
             msg.Properties["X-AdoNet-Id"] = id.ToString();
             return Task.FromResult(message);
@@ -77,7 +78,7 @@ namespace DotNetCqs.Queues.AdoNet
             EnsureNotDequeued();
 
             int id;
-            AdoNetMessageDto msg;
+            string data;
             using (var cmd = _connection.CreateCommand())
             {
                 cmd.Transaction = _transaction;
@@ -93,9 +94,7 @@ namespace DotNetCqs.Queues.AdoNet
 
 
                     id = reader.GetInt32(0);
-                    var data = reader.GetString(1);
-
-                    msg = (AdoNetMessageDto) _messageSerializer.Deserialize("Message", data);
+                    data = reader.GetString(1);
                 }
             }
             using (var cmd = _connection.CreateCommand())
@@ -106,6 +105,7 @@ namespace DotNetCqs.Queues.AdoNet
                 cmd.ExecuteNonQuery();
             }
 
+            var msg = (AdoNetMessageDto) _messageSerializer.Deserialize("Message", data);
             msg.ToMessage(_messageSerializer, out var message, out var principal);
             msg.Properties["X-AdoNet-Id"] = id.ToString();
             return new DequeuedMessage(principal, message);

@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
     
-    <Version>1.0.5</Version>
+    <Version>1.0.7</Version>
     <PackageReleaseNotes>
       ADO.NET transaction isolation level can now be configured using AdoNetMessageQueueProvider.
     </PackageReleaseNotes>

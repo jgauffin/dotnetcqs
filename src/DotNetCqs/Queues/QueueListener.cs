@@ -99,7 +99,7 @@ namespace DotNetCqs.Queues
                 catch (Exception ex)
                 {
                     Logger?.Invoke(LogLevel.Error, _queue.Name,
-                        "Message handling failed, " + ex);
+                        "Message handling failed.\r\n" + ex);
                     await Task.Delay(1000, token);
                 }
                 
@@ -108,6 +108,8 @@ namespace DotNetCqs.Queues
 
         private async Task HandleOneMessage(CancellationToken token, MsgWrapper wrapper)
         {
+            if (wrapper == null) throw new ArgumentNullException(nameof(wrapper));
+
             using (var session = _queue.BeginSession())
             {
                 try
@@ -116,18 +118,24 @@ namespace DotNetCqs.Queues
                     await session.SaveChanges();
                     session.Dispose();
                     if (wrapper.Message == null)
-                        await Task.Delay(100);
+                        await Task.Delay(100, token);
+                }
+                catch (SerializationException ex)
+                {
+                    Logger?.Invoke(LogLevel.Warning, _queue.Name,
+                        $"Failed to deserialize message, throwing it away. {ex}");
+                    await session.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     Logger?.Invoke(LogLevel.Warning, _queue.Name,
-                        "Message handling failed, attempt: " + wrapper.AttemptCount + ", " + ex);
+                        $"Message handling failed [attempt: {wrapper.AttemptCount}] {wrapper.Message?.Message?.Body} , {ex}");
 
                     // do not retry at all, consume invalid messages
                     if (RetryAttempts.Length == 0)
                     {
                         PoisonMessageDetected?.Invoke(this,
-                            new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
+                            new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex));
                         await session.SaveChanges();
                         session.Dispose();
                         await Task.Delay(1000, token);
@@ -139,10 +147,10 @@ namespace DotNetCqs.Queues
                     }
                     else
                     {
-                        Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message.");
+                        Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message: " + wrapper.Message?.Message?.Body);
 
                         PoisonMessageDetected?.Invoke(this,
-                            new PoisonMessageEventArgs(wrapper.Message.Principal, wrapper.Message.Message, ex));
+                            new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex));
                         await session.SaveChanges();
                     }
                 }
@@ -164,7 +172,7 @@ namespace DotNetCqs.Queues
             var outboundMessages = new List<Message>();
             using (var scope = _scopeFactory.CreateScope())
             {
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"Created scope: {scope.GetHashCode()}");
+                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}] Created scope.");
                 var e = new ScopeCreatedEventArgs(scope, msg.Principal, msg.Message);
                 ScopeCreated?.Invoke(this, e);
 
@@ -173,11 +181,11 @@ namespace DotNetCqs.Queues
                     : MessageInvokerFactory(scope);
                 var context = new InvocationContext(_queue.Name, msg.Principal, invoker, outboundMessages);
 
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, "Invoking message handler(s).");
+                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}] Invoking message handler(s).");
                 await invoker.ProcessAsync(context, msg.Message);
 
                 ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState));
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"Closing scope: {scope.GetHashCode()}");
+                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}]  Closing scope.");
             }
 
             if (msg.Principal == null)
@@ -226,16 +234,13 @@ namespace DotNetCqs.Queues
 
             public void Assign(DequeuedMessage message, int maxAttempts)
             {
-                if (Id == message.Message.MessageId)
-                {
+                _maxAttempts = maxAttempts;
+                _message = message;
+
+                if (Id.Equals(message.Message.MessageId))
                     AttemptCount++;
-                }
                 else
-                {
-                    _maxAttempts = maxAttempts;
-                    _message = message;
                     AttemptCount = 0;
-                }
             }
 
             public void Clear()
