@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Griffin.Container" Version="1.1.7" />
+    <PackageReference Include="Griffin.Container" Version="1.1.9" />
   </ItemGroup>
 
   <ItemGroup>

@@ -61,7 +61,7 @@ namespace DotNetCqs.Tests.DependencyInjection
 
             Func<Task> actual = () => sut.ProcessAsync(context, msg);
 
-            actual.ShouldThrow<HandlersFailedException>()
+            actual.Should().Throw<HandlersFailedException>()
                 .And.FailedHandlers[0].Exception.Message.Should().Be("Here comes Lore!");
         }
 
@@ -78,7 +78,7 @@ namespace DotNetCqs.Tests.DependencyInjection
 
             Func<Task> actual = () => sut.ProcessAsync(context, msg);
 
-            actual.ShouldThrow<HandlersFailedException>()
+            actual.Should().Throw<HandlersFailedException>()
                 .And.FailedHandlers.Count.Should().Be(2);
         }
 
@@ -109,7 +109,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
             Func<Task> actual = () => sut.ProcessAsync(context, new OneQuery());
 
-            actual.ShouldThrow<OnlyOneQueryHandlerAllowedException>();
+            actual.Should().Throw<OnlyOneQueryHandlerAllowedException>();
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
             Func<Task> actual = () => sut.ProcessAsync(context, new OneQuery());
 
-            actual.ShouldThrow<NoHandlerRegisteredException>();
+            actual.Should().Throw<NoHandlerRegisteredException>();
         }
 
         [Fact]

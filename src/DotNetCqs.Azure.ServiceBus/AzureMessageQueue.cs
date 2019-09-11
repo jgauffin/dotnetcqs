@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using DotNetCqs.Queues;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.Core;
 
 namespace DotNetCqs.Azure.ServiceBus
 {
     public class AzureMessageQueue : IMessageQueue
     {
-        private readonly QueueClient _queueClient;
+        private readonly MessageSender _sender;
+        private readonly MessageReceiver _receiver;
 
-        public AzureMessageQueue(string queueName, QueueClient queueClient)
+        public AzureMessageQueue(string connectionString, string queueName)
         {
+            _sender = new MessageSender(connectionString, queueName);
+            _receiver = new MessageReceiver(connectionString, queueName, ReceiveMode.PeekLock, new RetryExponential(TimeSpan.FromSeconds(1), TimeSpan.FromMinutes(3), 5));
             Name = queueName;
-            _queueClient = queueClient;
         }
 
         public string Name { get; }
@@ -22,14 +23,14 @@ namespace DotNetCqs.Azure.ServiceBus
 
         public IMessageQueueSession BeginSession()
         {
-            return new AzureMessageQueueSession(_queueClient, MessageSerializer);
+            return new AzureMessageQueueSession(_receiver, _sender, MessageSerializer);
         }
 
-        public async Task ReleaseEnqueueAsync(object identifier)
-        {
-            if (identifier == null) throw new ArgumentNullException(nameof(identifier));
-            var msgs = (List<BrokeredMessage>) identifier;
-            await _queueClient.SendBatchAsync(msgs);
-        }
+        //public async Task ReleaseEnqueueAsync(object identifier)
+        //{
+        //    if (identifier == null) throw new ArgumentNullException(nameof(identifier));
+        //    var msgs = (List<Message>) identifier;
+        //    await _queueClient.SendAsync(msgs);
+        //}
     }
 }

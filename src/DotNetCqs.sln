@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet.IntegrationTests", "DotNetCqs.AdoNet.IntegrationTests\DotNetCqs.Queues.AdoNet.IntegrationTests.csproj", "{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Azure.ServiceBus.ConsoleApp", "DotNetCqs.Azure.ServiceBus.ConsoleApp\DotNetCqs.Azure.ServiceBus.ConsoleApp.csproj", "{4AE22627-DE45-4E70-9925-4C0D4B68017C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Serializer.Newtonsoft.Json", "DotNetCqs.Serializer.Newtonsoft.Json\DotNetCqs.Serializer.Newtonsoft.Json.csproj", "{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AE22627-DE45-4E70-9925-4C0D4B68017C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AE22627-DE45-4E70-9925-4C0D4B68017C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AE22627-DE45-4E70-9925-4C0D4B68017C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AE22627-DE45-4E70-9925-4C0D4B68017C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

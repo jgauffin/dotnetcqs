@@ -38,7 +38,7 @@
 
 //            Func<Task> actual = () => bus.QueryAsync(ClaimsPrincipal.Current, new OneQuery());
 
-//            actual.ShouldThrow<OnlyOneQueryHandlerAllowedException>();
+//            actual.Should().Throw<OnlyOneQueryHandlerAllowedException>();
 //        }
 
 

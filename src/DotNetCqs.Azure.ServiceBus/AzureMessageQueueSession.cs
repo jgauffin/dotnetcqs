@@ -3,36 +3,46 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DotNetCqs.Queues;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.Core;
+using AzureMessage= Microsoft.Azure.ServiceBus.Message;
 
 namespace DotNetCqs.Azure.ServiceBus
 {
     public class AzureMessageQueueSession : IMessageQueueSession
     {
-        private readonly BrokeredMessageConverter _converter;
-        private readonly List<BrokeredMessage> _messagesRecieved = new List<BrokeredMessage>();
-        private readonly List<BrokeredMessage> _messagesToSend = new List<BrokeredMessage>();
-        private readonly QueueClient _queueClient;
+        private readonly MessageConverter _converter;
+        private readonly List<AzureMessage> _messagesReceived = new List<AzureMessage>();
+        private readonly List<AzureMessage> _messagesToSend = new List<AzureMessage>();
+        private readonly MessageReceiver _messageReceiver;
+        private readonly MessageSender _messageSender;
 
-        public AzureMessageQueueSession(QueueClient queueClient, IMessageSerializer<string> messageSerializer)
+        public AzureMessageQueueSession(MessageReceiver messageReceiver, MessageSender messageSender, IMessageSerializer<string> messageSerializer)
         {
-            _queueClient = queueClient;
-            _converter = new BrokeredMessageConverter(messageSerializer);
+            _messageReceiver = messageReceiver;
+            _messageSender = messageSender;
+            _converter = new MessageConverter(messageSerializer);
         }
 
         public async Task<Message> Dequeue(TimeSpan suggestedWaitPeriod)
         {
-            var brokeredMessage = await _queueClient.ReceiveAsync(suggestedWaitPeriod);
-            _messagesRecieved.Add(brokeredMessage);
-            var tuple = _converter.FromBrokeredMessage(brokeredMessage);
+            var message = await _messageReceiver.ReceiveAsync(suggestedWaitPeriod);
+            if (message == null)
+                return null;
+
+            _messagesReceived.Add(message);
+            var tuple = _converter.FromAzureMessage(message);
             return tuple.Item2;
         }
 
         public async Task<DequeuedMessage> DequeueWithCredentials(TimeSpan suggestedWaitPeriod)
         {
-            var dto = await _queueClient.ReceiveAsync(suggestedWaitPeriod);
-            _messagesRecieved.Add(dto);
-            var tuple = _converter.FromBrokeredMessage(dto);
+            var dto = await _messageReceiver.ReceiveAsync(suggestedWaitPeriod);
+            if (dto == null)
+                return null;
+
+            _messagesReceived.Add(dto);
+            var tuple = _converter.FromAzureMessage(dto);
             return new DequeuedMessage(tuple.Item1, tuple.Item2);
         }
 
@@ -40,7 +50,7 @@ namespace DotNetCqs.Azure.ServiceBus
         {
             foreach (var message in messages)
             {
-                var msg = _converter.ToBrokeredMessage(message, principal);
+                var msg = _converter.ToAzureMessage(message, principal);
                 _messagesToSend.Add(msg);
             }
             return Task.CompletedTask;
@@ -50,7 +60,7 @@ namespace DotNetCqs.Azure.ServiceBus
         {
             foreach (var message in messages)
             {
-                var msg = _converter.ToBrokeredMessage(message, null);
+                var msg = _converter.ToAzureMessage(message, null);
                 _messagesToSend.Add(msg);
             }
             return Task.CompletedTask;
@@ -58,35 +68,38 @@ namespace DotNetCqs.Azure.ServiceBus
 
         public Task EnqueueAsync(ClaimsPrincipal principal, Message message)
         {
-            var msg = _converter.ToBrokeredMessage(message, principal);
+            var msg = _converter.ToAzureMessage(message, principal);
             _messagesToSend.Add(msg);
             return Task.CompletedTask;
         }
 
         public Task EnqueueAsync(Message message)
         {
-            var msg = _converter.ToBrokeredMessage(message, null);
+            var msg = _converter.ToAzureMessage(message, null);
+            msg.TimeToLive = TimeSpan.FromMinutes(1);
             _messagesToSend.Add(msg);
             return Task.CompletedTask;
         }
 
         public async Task SaveChanges()
         {
-            await _queueClient.SendBatchAsync(_messagesToSend);
+            await _messageSender.SendAsync(_messagesToSend);
             _messagesToSend.Clear();
 
-            foreach (var message in _messagesRecieved)
-                await message.CompleteAsync();
-            _messagesRecieved.Clear();
+            foreach (var message in _messagesReceived)
+            {
+                await _messageReceiver.CompleteAsync(message.SystemProperties.LockToken);
+            }
+            _messagesReceived.Clear();
         }
 
         public void Dispose()
         {
             _messagesToSend.Clear();
 
-            foreach (var message in _messagesRecieved)
-                message.Abandon();
-            _messagesRecieved.Clear();
+            foreach (var message in _messagesReceived)
+                _messageReceiver.AbandonAsync(message.SystemProperties.LockToken).GetAwaiter().GetResult();
+            _messagesReceived.Clear();
         }
     }
 }
