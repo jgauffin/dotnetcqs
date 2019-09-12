@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using DotNetCqs.DependencyInjection;
-using DotNetCqs.DependencyInjection.GriffinContainer;
 using Griffin.Container;
 
 namespace DotNetCqs.Tests.Helpers

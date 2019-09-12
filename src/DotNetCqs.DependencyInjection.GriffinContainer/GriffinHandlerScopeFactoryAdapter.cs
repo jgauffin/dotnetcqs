@@ -1,8 +1,8 @@
 ﻿using System;
-using Griffin.Container;
 using DotNetCqs.DependencyInjection;
+using Griffin.Container;
 
-namespace DotNetCqs.DependencyInjection.GriffinContainer
+namespace DotNetCqs
 {
     public class GriffinHandlerScopeFactoryAdapter : IHandlerScopeFactory
     {

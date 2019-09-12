@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCqs.DependencyInjection;
+using DotNetCqs.DependencyInjection.Microsoft;
 using DotNetCqs.MessageProcessor;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Handlers;

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DotNetCqs.Bus;
 using DotNetCqs.DependencyInjection;
+using DotNetCqs.DependencyInjection.Microsoft;
 using DotNetCqs.MessageProcessor;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Handlers;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Messages;
