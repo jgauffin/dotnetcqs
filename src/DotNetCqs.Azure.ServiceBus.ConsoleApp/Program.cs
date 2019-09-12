@@ -12,11 +12,8 @@ namespace DotNetCqs.Azure.ServiceBus.ConsoleApp
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
-            //var conStr = config["ConnectionString"];
-            //var queueName = config["QueueName"];
-            var conStr =
-                "Endpoint=sb://coderrlive.servicebus.windows.net/;SharedAccessKeyName=App;SharedAccessKey=kajrs/Vd1Kg0q951RQaHSb6rDNNxmIVRxkcJgIM5puU=";
-            var queueName = "reports-prod";
+            var conStr = config["ConnectionString"];
+            var queueName = config["QueueName"];
 
             var queue = new AzureMessageQueue(conStr, queueName) { MessageSerializer = new JsonMessageSerializer() };
             ClearQueue(queue);
