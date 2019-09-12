@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace DotNetCqs.Queues.AdoNet
+namespace DotNetCqs.Serializer.Newtonsoft.Json.Messages
 {
     /// <summary>
     ///     Claim serialization

@@ -1,0 +1,22 @@
+﻿using System;
+using Autofac;
+using DotNetCqs.DependencyInjection;
+
+namespace DotNetCqs.Autofac
+{
+    public class AutofacHandlerScopeFactory : IHandlerScopeFactory
+    {
+        private readonly IContainer _container;
+
+        public AutofacHandlerScopeFactory(IContainer container)
+        {
+            _container = container ?? throw new ArgumentNullException(nameof(container));
+        }
+
+        public IHandlerScope CreateScope()
+        {
+            var scope = _container.BeginLifetimeScope();
+            return new AutofacScopeAdapter(scope);
+        }
+    }
+}

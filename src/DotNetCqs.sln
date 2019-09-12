@@ -17,9 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet.IntegrationTests", "DotNetCqs.AdoNet.IntegrationTests\DotNetCqs.Queues.AdoNet.IntegrationTests.csproj", "{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Azure.ServiceBus.ConsoleApp", "DotNetCqs.Azure.ServiceBus.ConsoleApp\DotNetCqs.Azure.ServiceBus.ConsoleApp.csproj", "{4AE22627-DE45-4E70-9925-4C0D4B68017C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Azure.ServiceBus.ConsoleApp", "DotNetCqs.Azure.ServiceBus.ConsoleApp\DotNetCqs.Azure.ServiceBus.ConsoleApp.csproj", "{4AE22627-DE45-4E70-9925-4C0D4B68017C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Serializer.Newtonsoft.Json", "DotNetCqs.Serializer.Newtonsoft.Json\DotNetCqs.Serializer.Newtonsoft.Json.csproj", "{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Serializer.Newtonsoft.Json", "DotNetCqs.Serializer.Newtonsoft.Json\DotNetCqs.Serializer.Newtonsoft.Json.csproj", "{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Autofac", "DotNetCqs.Autofac\DotNetCqs.Autofac.csproj", "{473B10ED-6B00-49BA-B21C-028205932DF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Autofac.Tests", "DotNetCqs.Autofac.Tests\DotNetCqs.Autofac.Tests.csproj", "{3C403C3C-C450-4BC9-A1FD-D28F0589C985}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +67,14 @@ Global
 		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473B10ED-6B00-49BA-B21C-028205932DF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473B10ED-6B00-49BA-B21C-028205932DF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473B10ED-6B00-49BA-B21C-028205932DF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473B10ED-6B00-49BA-B21C-028205932DF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

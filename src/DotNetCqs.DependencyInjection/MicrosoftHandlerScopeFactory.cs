@@ -1,7 +1,8 @@
 ﻿using System;
+using DotNetCqs.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DotNetCqs.DependencyInjection.Microsoft
+namespace DotNetCqs
 {
     public class MicrosoftHandlerScopeFactory : IHandlerScopeFactory
     {

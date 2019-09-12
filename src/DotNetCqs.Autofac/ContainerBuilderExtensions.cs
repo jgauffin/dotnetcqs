@@ -22,63 +22,25 @@ namespace DotNetCqs.Autofac
                     .OwnedByLifetimeScope();
         }
 
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterCommandHandlers(this ContainerBuilder builer, params Assembly[] assemblies)
+        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterMessageHandlers(this ContainerBuilder builer, params Assembly[] assemblies)
         {
             return
                 builer.RegisterAssemblyTypes(assemblies)
-                    .Where(IsCommandHandler)
+                    .Where(IsMessageHandler)
                     .AsImplementedInterfaces()
                     .InstancePerLifetimeScope()
                     .OwnedByLifetimeScope();
-        }
-
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterApplicationEventHandlers(this ContainerBuilder builer, params Assembly[] assemblies)
-        {
-            return
-                builer.RegisterAssemblyTypes(assemblies)
-                    .Where(IsEventHandler)
-                    .AsImplementedInterfaces()
-                    .InstancePerLifetimeScope()
-                    .OwnedByLifetimeScope();
-        }
-
-        public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterRequestReplyHandlers(this ContainerBuilder builer, params Assembly[] assemblies)
-        {
-            return
-                builer.RegisterAssemblyTypes(assemblies)
-                    .Where(IsRequestReplyHandler)
-                    .AsImplementedInterfaces()
-                    .InstancePerLifetimeScope()
-                    .OwnedByLifetimeScope();
-        }
-
-        public static void RegisterCqsBus(this ContainerBuilder builder, ICqsStorage storage)
-        {
-            builder.RegisterType<ContainerCommandBus>().AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<ContainerQueryBus>().AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<ContainerRequestReplyBus>().AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<ContainerEventBus>().AsImplementedInterfaces().SingleInstance();
-            builder.RegisterInstance(storage).AsImplementedInterfaces().SingleInstance();
         }
 
         private static bool IsQueryHandler(Type arg)
         {
-            return arg.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IApplicationEventSubscriber<>));
-        }
-
-        private static bool IsCommandHandler(Type arg)
-        {
-            return arg.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandHandler<>));
-        }
-
-        private static bool IsEventHandler(Type arg)
-        {
             return arg.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IQueryHandler<,>));
         }
 
-        private static bool IsRequestReplyHandler(Type arg)
+        private static bool IsMessageHandler(Type arg)
         {
-            return arg.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
+            return arg.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IMessageHandler<>));
         }
+
     }
 }

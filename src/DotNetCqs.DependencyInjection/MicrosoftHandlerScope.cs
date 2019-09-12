@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using DotNetCqs.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DotNetCqs.DependencyInjection.Microsoft
+namespace DotNetCqs
 {
     public class MicrosoftHandlerScope : IHandlerScope
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DotNetCqs.Queues.AdoNet;
 
 namespace DotNetCqs.Serializer.Newtonsoft.Json.Messages
 {

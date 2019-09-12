@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace DotNetCqs.Queues.AdoNet
+namespace DotNetCqs.Serializer.Newtonsoft.Json.Messages
 {
     /// <summary>
     ///     To serialize claims
