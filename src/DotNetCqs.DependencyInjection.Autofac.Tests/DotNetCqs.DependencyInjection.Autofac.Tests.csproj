@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNetCqs.Autofac\DotNetCqs.DependencyInjection.Autofac.csproj" />
+    <ProjectReference Include="..\DotNetCqs.DependencyInjection.Autofac\DotNetCqs.DependencyInjection.Autofac.csproj" />
     <ProjectReference Include="..\DotNetCqs\DotNetCqs.csproj" />
   </ItemGroup>
 

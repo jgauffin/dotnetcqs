@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNetCqs.DependencyInjection\DotNetCqs.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\DotNetCqs.DependencyInjection.Microsoft\DotNetCqs.DependencyInjection.Microsoft.csproj" />
     <ProjectReference Include="..\DotNetCqs.Queues.AdoNet\DotNetCqs.Queues.AdoNet.csproj" />
     <ProjectReference Include="..\DotNetCqs\DotNetCqs.csproj" />
   </ItemGroup>
