@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Autofac;
 using DotNetCqs.DependencyInjection;
 
-namespace DotNetCqs.Autofac
+namespace DotNetCqs
 {
     public class AutofacScopeAdapter : IHandlerScope
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace DotNetCqs.Autofac.Tests.TestSubjects
+namespace DotNetCqs.DependencyInjection.Autofac.Tests.TestSubjects
 {
     public class Type2Handler : IQueryHandler<Type2, Type2Result>
     {

@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Autofac;
-using DotNetCqs.Autofac.Tests.TestSubjects;
+using DotNetCqs.DependencyInjection.Autofac.Tests.TestSubjects;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNetCqs.Autofac.Tests
+namespace DotNetCqs.DependencyInjection.Autofac.Tests
 {
     public class ContainerTests
     {

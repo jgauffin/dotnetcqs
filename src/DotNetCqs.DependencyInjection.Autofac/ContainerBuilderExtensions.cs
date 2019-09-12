@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Features.Scanning;
 
-namespace DotNetCqs.Autofac
+namespace DotNetCqs
 {
     public static class ContainerBuilderExtensions
     {

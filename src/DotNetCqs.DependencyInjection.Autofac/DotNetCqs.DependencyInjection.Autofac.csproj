@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>DotNetCqs</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Autofac.xml</DocumentationFile>
@@ -12,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>DotNetCqs.Autofac</PackageId>
+    <PackageId>DotNetCqs.DependencyInjection.Autofac</PackageId>
     <Authors>jgauffin</Authors>
     <Description>Azure service bus integration for DotNetCqs.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
