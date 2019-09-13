@@ -2,7 +2,7 @@
 using DotNetCqs.Serializer.Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 
-namespace DotNetCqs.Azure.ServiceBus.ConsoleApp
+namespace DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp
 {
     class Program
     {

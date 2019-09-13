@@ -6,9 +6,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using DotNetCqs.Queues;
 
-namespace DotNetCqs.Azure.ServiceBus
+namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     public class MessageConverter
     {

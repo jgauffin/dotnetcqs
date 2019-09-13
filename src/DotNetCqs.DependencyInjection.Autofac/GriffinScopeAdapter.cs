@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using DotNetCqs.DependencyInjection;
 
-namespace DotNetCqs
+namespace DotNetCqs.DependencyInjection.Autofac
 {
     public class AutofacScopeAdapter : IHandlerScope
     {

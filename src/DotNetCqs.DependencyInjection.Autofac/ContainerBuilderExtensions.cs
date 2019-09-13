@@ -5,7 +5,7 @@ using Autofac;
 using Autofac.Builder;
 using Autofac.Features.Scanning;
 
-namespace DotNetCqs
+namespace DotNetCqs.DependencyInjection.Autofac
 {
     public static class ContainerBuilderExtensions
     {

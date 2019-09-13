@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using DotNetCqs.Queues;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Core;
 using AzureMessage= Microsoft.Azure.ServiceBus.Message;
 
-namespace DotNetCqs.Azure.ServiceBus
+namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     public class AzureMessageQueueSession : IMessageQueueSession
     {

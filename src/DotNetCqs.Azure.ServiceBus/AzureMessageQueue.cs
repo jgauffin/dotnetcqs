@@ -1,9 +1,8 @@
 ﻿using System;
-using DotNetCqs.Queues;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Core;
 
-namespace DotNetCqs.Azure.ServiceBus
+namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     public class AzureMessageQueue : IMessageQueue
     {

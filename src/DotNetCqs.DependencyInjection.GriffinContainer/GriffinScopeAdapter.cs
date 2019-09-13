@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using DotNetCqs.DependencyInjection;
 using Griffin.Container;
 
-namespace DotNetCqs
+namespace DotNetCqs.DependencyInjection.GriffinContainer
 {
     public class GriffinScopeAdapter : IHandlerScope
     {

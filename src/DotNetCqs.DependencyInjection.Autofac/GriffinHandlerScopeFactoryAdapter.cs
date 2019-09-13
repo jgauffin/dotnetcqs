@@ -1,8 +1,7 @@
 ﻿using System;
 using Autofac;
-using DotNetCqs.DependencyInjection;
 
-namespace DotNetCqs
+namespace DotNetCqs.DependencyInjection.Autofac
 {
     public class AutofacHandlerScopeFactory : IHandlerScopeFactory
     {

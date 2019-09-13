@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCqs.MessageProcessor;
-using DotNetCqs.Queues;
 using Microsoft.Azure.ServiceBus;
 
-namespace DotNetCqs.Azure.ServiceBus
+namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     public class AzureServiceBusListener
     {

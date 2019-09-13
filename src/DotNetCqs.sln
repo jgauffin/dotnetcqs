@@ -11,13 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Tests", "DotNetCq
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.DependencyInjection.GriffinContainer", "DotNetCqs.DependencyInjection.GriffinContainer\DotNetCqs.DependencyInjection.GriffinContainer.csproj", "{A86AC66C-ADB6-48F4-A82E-467EA5AB805C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Azure.ServiceBus", "DotNetCqs.Azure.ServiceBus\DotNetCqs.Azure.ServiceBus.csproj", "{EDBE1001-4335-4F2A-BA63-02A963AC8E50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.Azure.ServiceBus", "DotNetCqs.Azure.ServiceBus\DotNetCqs.Queues.Azure.ServiceBus.csproj", "{EDBE1001-4335-4F2A-BA63-02A963AC8E50}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet", "DotNetCqs.Queues.AdoNet\DotNetCqs.Queues.AdoNet.csproj", "{FDFCE6C6-3909-4B85-B969-3C97697C1E84}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.AdoNet.IntegrationTests", "DotNetCqs.Queues.AdoNet.IntegrationTests\DotNetCqs.Queues.AdoNet.IntegrationTests.csproj", "{DFD5A1C7-2CA4-4159-AB03-7C09CCB04403}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Azure.ServiceBus.ConsoleApp", "DotNetCqs.Azure.ServiceBus.ConsoleApp\DotNetCqs.Azure.ServiceBus.ConsoleApp.csproj", "{4AE22627-DE45-4E70-9925-4C0D4B68017C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp", "DotNetCqs.Azure.ServiceBus.ConsoleApp\DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp.csproj", "{4AE22627-DE45-4E70-9925-4C0D4B68017C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.Serializer.Newtonsoft.Json", "DotNetCqs.Serializer.Newtonsoft.Json\DotNetCqs.Serializer.Newtonsoft.Json.csproj", "{3D2E7228-BF10-4CB9-9128-3339FFE5FA6A}"
 EndProject

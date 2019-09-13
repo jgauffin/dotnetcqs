@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>DotNetCqs.Azure.ServiceBus</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Azure.ServiceBus.xml</DocumentationFile>
 
@@ -13,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>DotNetCqs.Azure.ServiceBus</PackageId>
+    <PackageId>DotNetCqs.Queues.Azure.ServiceBus</PackageId>
     <Authors>jgauffin</Authors>
     <Description>Azure service bus integration for DotNetCqs.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

@@ -1,4 +1,4 @@
-﻿namespace DotNetCqs.Azure.ServiceBus
+﻿namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     public interface IExceptionLogger
     {

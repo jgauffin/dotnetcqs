@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Azure.ServiceBus;
 
-namespace DotNetCqs.Azure.ServiceBus
+namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     public class ReceiveExceptionContext
     {

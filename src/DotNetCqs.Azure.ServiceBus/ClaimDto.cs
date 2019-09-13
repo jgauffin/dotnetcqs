@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace DotNetCqs.Azure.ServiceBus
+namespace DotNetCqs.Queues.Azure.ServiceBus
 {
     /// <summary>
     ///     To serialize claims
