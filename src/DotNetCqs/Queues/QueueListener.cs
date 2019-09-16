@@ -25,7 +25,8 @@ namespace DotNetCqs.Queues
         ///     Creates a new instance of <see cref="QueueListener" />.
         /// </summary>
         /// <param name="inboundQueue">Used to receive messages</param>
-        /// <param name="scopeFactory"></param>
+        /// <param name="outboundQueue">All messages enqueued in handlers will be sent to this queue</param>
+        /// <param name="scopeFactory">Used to create a new scope each time a message is handled.</param>
         public QueueListener(IMessageQueue inboundQueue, IMessageQueue outboundQueue, IHandlerScopeFactory scopeFactory)
         {
             _outboundRouter = new SingleQueueRouter(outboundQueue);
@@ -102,8 +103,9 @@ namespace DotNetCqs.Queues
                         "Message handling failed.\r\n" + ex);
                     await Task.Delay(1000, token);
                 }
-                
+
             }
+            Logger?.Invoke(LogLevel.Info,  _queue.Name,"Told to shutdown by the cancellationToken.");
         }
 
         private async Task HandleOneMessage(CancellationToken token, MsgWrapper wrapper)
@@ -135,7 +137,10 @@ namespace DotNetCqs.Queues
                     if (RetryAttempts.Length == 0)
                     {
                         PoisonMessageDetected?.Invoke(this,
-                            new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex));
+                            new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex)
+                            {
+                                MessageQueue = _queue
+                            });
                         await session.SaveChanges();
                         session.Dispose();
                         await Task.Delay(1000, token);
@@ -150,7 +155,10 @@ namespace DotNetCqs.Queues
                         Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message: " + wrapper.Message?.Message?.Body);
 
                         PoisonMessageDetected?.Invoke(this,
-                            new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex));
+                            new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex)
+                            {
+                                MessageQueue = _queue
+                            });
                         await session.SaveChanges();
                     }
                 }

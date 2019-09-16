@@ -45,7 +45,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
 
         private async Task OnMessage2(Microsoft.Azure.ServiceBus.Message message, CancellationToken token)
         {
-            if (token.IsCancellationRequested)
+            if (token.IsCancellationRequested || message == null)
                 return;
 
             try

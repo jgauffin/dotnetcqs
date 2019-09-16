@@ -35,5 +35,10 @@ namespace DotNetCqs.Queues
         ///     Principal that was attached to the message (if any)
         /// </summary>
         public ClaimsPrincipal Principal { get; }
+
+        /// <summary>
+        /// Queue that the message was in.
+        /// </summary>
+        public IMessageQueue MessageQueue { get; set; }
     }
 }
