@@ -45,11 +45,11 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
                 props.Add(kvp.Key, kvp.Value.ToString());
 
             ClaimsPrincipal principal = null;
-            if (props.TryGetValue("X-ClaimsType", out var claimsType))
+            if (props.TryGetValue("X-Claims-Type", out var claimsType))
             {
                 var claimsStr = props["X-Claims"];
                 props.Remove("X-Claims");
-                props.Remove("X-ClaimsType");
+                props.Remove("X-Claims-Type");
 
                 var claimDtos = (IEnumerable<ClaimDto>)_messageSerializer.Deserialize(claimsType, claimsStr);
                 var claims = claimDtos.Select(x => x.ToClaim()).ToList();

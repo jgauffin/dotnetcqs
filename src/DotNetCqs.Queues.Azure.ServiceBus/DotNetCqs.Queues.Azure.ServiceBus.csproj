@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Azure.ServiceBus.xml</DocumentationFile>
 
-    <Version>1.0.0-rc02</Version>
+    <Version>1.0.0-rc03</Version>
     <PackageReleaseNotes>
-      Exits if the Receiver callback gets a null message
+      Corrected ClaimsHandling
     </PackageReleaseNotes>
   </PropertyGroup>
 
