@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace DotNetCqs.DependencyInjection
         {
             _messageInvoker = messageInvoker;
             Principal = principal;
+
             foreach (var key in message.Properties.Keys)
                 Properties[key] = message.Properties[key];
 
@@ -35,7 +37,7 @@ namespace DotNetCqs.DependencyInjection
         }
 
         public Guid MessageId { get; }
-        public IDictionary<string, string> Properties { get; set; }
+        public IDictionary<string, string> Properties { get; set; } = new ConcurrentDictionary<string, string>();
         public ClaimsPrincipal Principal { get; set; }
 
         public Task ReplyAsync(object message)
