@@ -114,7 +114,9 @@ namespace DotNetCqs.DependencyInjection
 
         private async Task InvokeMessageHandlers(IMessageContext context, Message message)
         {
-            var type = typeof(IMessageHandler<>).MakeGenericType(message.Body.GetType());
+            var messageType = message.Body.GetType();
+            var handleMethodParameterTypes = new Type[] {typeof(IMessageContext), messageType};
+            var type = typeof(IMessageHandler<>).MakeGenericType(messageType);
             var handlers = _scope.Create(type).ToList();
             if (handlers.Count == 0)
             {
@@ -134,7 +136,7 @@ namespace DotNetCqs.DependencyInjection
             {
                 var tasks = handlers.Select(async handler =>
                 {
-                    var mi = handler.GetType().GetMethod("HandleAsync");
+                    var mi = handler.GetType().GetMethod("HandleAsync", handleMethodParameterTypes);
                     var task = (Task) mi.Invoke(handler, new[] {context, message.Body});
                     Stopwatch sw = null;
                     var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
@@ -192,7 +194,7 @@ namespace DotNetCqs.DependencyInjection
                 var failedHandlers = new List<FailedHandler>();
                 foreach (var handler in handlers)
                 {
-                    var mi = handler.GetType().GetMethod("HandleAsync");
+                    var mi = handler.GetType().GetMethod("HandleAsync", handleMethodParameterTypes);
                     var task = (Task)mi.Invoke(handler, new[] { context, message.Body });
                     Stopwatch sw = null;
                     var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
