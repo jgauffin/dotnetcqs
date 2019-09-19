@@ -12,15 +12,21 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
     public class MessageConverter
     {
         private readonly IMessageSerializer<string> _messageSerializer;
-        ConcurrentQueue<MemoryStream> _allocatedStream = new ConcurrentQueue<MemoryStream>();
+        private readonly ConcurrentQueue<MemoryStream> _allocatedStream = new ConcurrentQueue<MemoryStream>();
 
         public MessageConverter(IMessageSerializer<string> messageSerializer)
         {
-            _messageSerializer = messageSerializer;
+            _messageSerializer = messageSerializer ?? throw new ArgumentNullException(nameof(messageSerializer));
         }
 
         public Tuple<ClaimsPrincipal, Message> FromAzureMessage(Microsoft.Azure.ServiceBus.Message message)
         {
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (message.UserProperties == null)
+                throw new ArgumentException("message.UserProperties cannot be null.");
+            if (message.Body == null)
+                throw new ArgumentException("message.Body cannot be null.");
+
             string bodyStr;
             if (message.UserProperties.ContainsKey("IsCompressed"))
             {
@@ -34,6 +40,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
                 bodyStr = Encoding.UTF8.GetString(destinationStream.GetBuffer(), 0, (int)destinationStream.Length);
                 destinationStream.SetLength(0);
                 _allocatedStream.Enqueue(destinationStream);
+                message.UserProperties.Remove("IsCompressed");
             }
             else
                 bodyStr = Encoding.UTF8.GetString(message.Body);
@@ -42,7 +49,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
 
             var props = new Dictionary<string, string>();
             foreach (var kvp in message.UserProperties)
-                props.Add(kvp.Key, kvp.Value.ToString());
+                props.Add(kvp.Key, kvp.Value?.ToString());
 
             ClaimsPrincipal principal = null;
             if (props.TryGetValue("X-Claims-Type", out var claimsType))
