@@ -192,7 +192,7 @@ namespace DotNetCqs.Queues
                 Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}] Invoking message handler(s).");
                 await invoker.ProcessAsync(context, msg.Message);
 
-                ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState));
+                ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState){Principal = e.Principal });
                 Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}]  Closing scope.");
             }
 

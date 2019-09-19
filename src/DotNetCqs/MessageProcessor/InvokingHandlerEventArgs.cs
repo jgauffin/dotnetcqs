@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using DotNetCqs.DependencyInjection;
 
 namespace DotNetCqs.MessageProcessor
@@ -31,5 +32,7 @@ namespace DotNetCqs.MessageProcessor
         ///     Scope used to locate handlers.
         /// </summary>
         public IHandlerScope Scope { get; set; }
+
+        public ClaimsPrincipal Principal { get; set; }
     }
 }

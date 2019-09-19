@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace DotNetCqs.DependencyInjection
 {
@@ -12,6 +14,7 @@ namespace DotNetCqs.DependencyInjection
         /// </summary>
         /// <param name="scope">Created message scope</param>
         /// <param name="message">Message that triggered the scope creation</param>
+        /// <param name="principal"></param>
         /// <param name="applicationState">
         ///     Application state (used by the library used to be able to pass information to the other
         ///     events for the same message)
@@ -23,6 +26,8 @@ namespace DotNetCqs.DependencyInjection
             ApplicationState = applicationState;
         }
 
+
+        public ClaimsPrincipal Principal { get; set; }
 
         /// <summary>
         ///     State retained between ScopeCreated and ScopeClosing events

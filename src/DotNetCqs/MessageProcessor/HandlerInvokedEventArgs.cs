@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using DotNetCqs.DependencyInjection;
 
 namespace DotNetCqs.MessageProcessor
@@ -52,5 +53,6 @@ namespace DotNetCqs.MessageProcessor
         public Message Message { get; }
 
         public IHandlerScope Scope { get; }
+        public ClaimsPrincipal Principal { get; set; }
     }
 }

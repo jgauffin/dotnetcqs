@@ -26,7 +26,7 @@ namespace DotNetCqs.DependencyInjection
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
-        
+
         /// <summary>
         ///     Create a task per handler and invoke them in parallel.
         /// </summary>
@@ -70,7 +70,7 @@ namespace DotNetCqs.DependencyInjection
                 Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), $"Replying with {msg.Body.GetType()}");
                 await context.ReplyAsync(msg);
             }
-                
+
         }
 
         public Task ProcessAsync(IInvocationContext context, object message)
@@ -135,29 +135,38 @@ namespace DotNetCqs.DependencyInjection
                 var tasks = handlers.Select(async handler =>
                 {
                     var mi = handler.GetType().GetMethod("HandleAsync");
-                    var task = (Task) mi.Invoke(handler, new[] {context, message.Body});
+                    var task = (Task)mi.Invoke(handler, new[] { context, message.Body });
                     Stopwatch sw = null;
-                    var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
+                    var args1 = new InvokingHandlerEventArgs(_scope, handler, message)
+                    {
+                        Principal = context.Principal
+                    };
                     try
                     {
                         if (HandlerInvoked != null)
                             sw = Stopwatch.StartNew();
 
-                    Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), "Invoking " + handler.GetType());
+                        Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), "Invoking " + handler.GetType());
                         InvokingHandler?.Invoke(this, args1);
                         await task;
                         sw?.Stop();
-                        HandlerInvoked?.Invoke(this,
-                            new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero));
+
+                        var e = new HandlerInvokedEventArgs(_scope, handler, message, args1,
+                            sw?.Elapsed ?? TimeSpan.Zero)
+                        {
+                            Principal = context.Principal
+                        };
+                        HandlerInvoked?.Invoke(this, e);
                     }
                     catch (Exception ex)
                     {
-                    Logger?.Invoke(LogLevel.Error, message.MessageId.ToString("N"),
-                        $"Handler failed: {handler.GetType()}, Exception: {ex}");
+                        Logger?.Invoke(LogLevel.Error, message.MessageId.ToString("N"),
+                            $"Handler failed: {handler.GetType()}, Exception: {ex}");
                         var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
                             sw?.Elapsed ?? TimeSpan.Zero)
                         {
-                            Exception = ex
+                            Exception = ex,
+                            Principal = context.Principal
                         };
                         HandlerInvoked?.Invoke(this, e);
 
@@ -195,7 +204,10 @@ namespace DotNetCqs.DependencyInjection
                     var mi = handler.GetType().GetMethod("HandleAsync");
                     var task = (Task)mi.Invoke(handler, new[] { context, message.Body });
                     Stopwatch sw = null;
-                    var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
+                    var args1 = new InvokingHandlerEventArgs(_scope, handler, message)
+                    {
+                        Principal = context.Principal
+                    };
                     try
                     {
                         if (HandlerInvoked != null)
@@ -204,18 +216,23 @@ namespace DotNetCqs.DependencyInjection
                         InvokingHandler?.Invoke(this, args1);
                         await task;
                         sw?.Stop();
-                        HandlerInvoked?.Invoke(this,
-                            new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero));
+                        var e = new HandlerInvokedEventArgs(_scope, handler, message, args1,
+                            sw?.Elapsed ?? TimeSpan.Zero)
+                        {
+                            Principal = context.Principal
+                        };
+                        HandlerInvoked?.Invoke(this,e);
                     }
                     catch (Exception ex)
                     {
                         var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
                             sw?.Elapsed ?? TimeSpan.Zero)
                         {
-                            Exception = ex
+                            Exception = ex,
+                            Principal = context.Principal
                         };
                         HandlerInvoked?.Invoke(this, e);
-                        failedHandlers.Add(new FailedHandler(){Exception = ex, HandlerType = handlers.GetType()});
+                        failedHandlers.Add(new FailedHandler() { Exception = ex, HandlerType = handlers.GetType() });
                     }
 
                 }
@@ -240,7 +257,10 @@ namespace DotNetCqs.DependencyInjection
 
             Task task;
             Stopwatch sw = null;
-            var args1 = new InvokingHandlerEventArgs(_scope, handler, message);
+            var args1 = new InvokingHandlerEventArgs(_scope, handler, message)
+            {
+                Principal = context.Principal
+            };
             try
             {
                 if (HandlerInvoked != null)
@@ -248,15 +268,18 @@ namespace DotNetCqs.DependencyInjection
 
                 InvokingHandler?.Invoke(this, args1);
 
-                task = (Task) handler
+                task = (Task)handler
                     .GetType()
                     .GetMethod("HandleAsync")
-                    .Invoke(handler, new[] {context, message.Body});
+                    .Invoke(handler, new[] { context, message.Body });
                 await task;
 
                 sw?.Stop();
-                HandlerInvoked?.Invoke(this,
-                    new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero));
+                var e = new HandlerInvokedEventArgs(_scope, handler, message, args1, sw?.Elapsed ?? TimeSpan.Zero)
+                {
+                    Principal = context.Principal
+                };
+                HandlerInvoked?.Invoke(this,e);
             }
             catch (Exception ex)
             {

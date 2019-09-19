@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+using DotNetCqs.DependencyInjection;
+using DotNetCqs.MessageProcessor;
 using DotNetCqs.Serializer.Newtonsoft.Json;
+using DotNetCqs.Tests.MessageProcessor;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp
@@ -12,11 +19,33 @@ namespace DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
-            var conStr = config["ConnectionString"];
-            var queueName = config["QueueName"];
+            //var conStr = config["ConnectionString"];
+            //var queueName = config["QueueName"];
+            var conStr =
+                "Endpoint=sb://coderrlive.servicebus.windows.net/;SharedAccessKeyName=App;SharedAccessKey=zV623X84oZuyWEgn/PR21a72/snkxZA/r7PIMJYWEbY=";
+            var queueName = "labb";
 
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, "11"),
+                new Claim(ClaimTypes.Name, "Arne"),
+                new Claim(ClaimTypes.Email, "Jonas@gauffin.com")
+            };
+            var identity = new ClaimsIdentity(claims, "Mofo");
+            var p = new ClaimsPrincipal(identity);
             var queue = new AzureMessageQueue(conStr, queueName) { MessageSerializer = new JsonMessageSerializer() };
             ClearQueue(queue);
+
+            Console.WriteLine("Sending");
+            using (var session = queue.BeginSession())
+            {
+                session.EnqueueAsync(p, new Message("Hello world!"));
+                session.SaveChanges();
+            }
+            Console.WriteLine("SENT");
+
+            QueueListener listener = new QueueListener(queue, queue, new ManualScopeFactory());
+            listener.RunAsync(new CancellationToken()).GetAwaiter().GetResult();
 
             SendReceiveSingle(queue);
             Console.WriteLine("==============");
@@ -119,6 +148,48 @@ namespace DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp
                 }
             }
 
+        }
+    }
+
+    internal class ManualScopeFactory : IHandlerScopeFactory
+    {
+        public IHandlerScope CreateScope()
+        {
+            return new ManualScope();
+        }
+    }
+
+    public class MessageHandler : IMessageHandler<string>
+    {
+        public Task HandleAsync(IMessageContext context, string message)
+        {
+            Console.WriteLine("Got it: " + message + ", principal: " + context.Principal);
+            return Task.CompletedTask;
+        }
+    }
+
+    internal class ManualScope : IHandlerScope
+    {
+        public void Dispose()
+        {
+            
+        }
+
+        public IEnumerable<object> Create(Type messageHandlerServiceType)
+        {
+            Console.WriteLine("Creating "  + messageHandlerServiceType);
+            return new List<object>() {new MessageHandler()};
+        }
+
+        public IEnumerable<T> ResolveDependency<T>()
+        {
+            if (typeof(T) == typeof(IMessageInvoker))
+            {
+                return new[] {(T) (object) new MessageInvoker(this)};
+            }
+
+            Console.WriteLine("Returning depndency " + typeof(T));
+            return new T[0];
         }
     }
 }

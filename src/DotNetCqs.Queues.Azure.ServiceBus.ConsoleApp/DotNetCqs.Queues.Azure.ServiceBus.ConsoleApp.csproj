@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DotNetCqs.DependencyInjection.Tests\DotNetCqs.Tests.csproj" />
     <ProjectReference Include="..\DotNetCqs.Queues.Azure.ServiceBus\DotNetCqs.Queues.Azure.ServiceBus.csproj" />
     <ProjectReference Include="..\DotNetCqs.Serializer.Newtonsoft.Json\DotNetCqs.Serializer.Newtonsoft.Json.csproj" />
   </ItemGroup>
