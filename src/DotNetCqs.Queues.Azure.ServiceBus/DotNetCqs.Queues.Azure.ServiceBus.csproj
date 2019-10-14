@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Azure.ServiceBus.xml</DocumentationFile>
 
-    <Version>1.0.0-rc05</Version>
+    <Version>1.0.0</Version>
     <PackageReleaseNotes>
-      Setting authenticationType.
+      It's alive!
     </PackageReleaseNotes>
   </PropertyGroup>
 
