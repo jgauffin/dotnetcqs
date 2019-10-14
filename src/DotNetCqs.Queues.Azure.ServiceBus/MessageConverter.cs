@@ -51,6 +51,15 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
             foreach (var kvp in message.UserProperties)
                 props.Add(kvp.Key, kvp.Value?.ToString());
 
+            if (props.TryGetValue("X-Claims-Auth-Type", out var authType))
+            {
+                props.Remove("X-Claims-Auth-Type");
+            }
+            else
+            {
+                authType = "DotNetCqs";
+            }
+
             ClaimsPrincipal principal = null;
             if (props.TryGetValue("X-Claims-Type", out var claimsType))
             {
@@ -60,8 +69,10 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
 
                 var claimDtos = (IEnumerable<ClaimDto>)_messageSerializer.Deserialize(claimsType, claimsStr);
                 var claims = claimDtos.Select(x => x.ToClaim()).ToList();
-                principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
+                principal = new ClaimsPrincipal(new ClaimsIdentity(claims, authType));
             }
+
+            
 
             var msg = new Message(body, props)
             {
@@ -119,6 +130,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
                 _messageSerializer.Serialize(claims, out var claimsStr, out var claimsContentType);
                 msg.UserProperties["X-Claims"] = claimsStr;
                 msg.UserProperties["X-Claims-Type"] = claimsContentType;
+                msg.UserProperties["X-Claims-Auth-Type"] = principal.Identity.AuthenticationType;
             }
 
             return msg;

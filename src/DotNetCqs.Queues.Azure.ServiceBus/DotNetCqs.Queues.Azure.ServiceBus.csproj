@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Azure.ServiceBus.xml</DocumentationFile>
 
-    <Version>1.0.0-rc04</Version>
+    <Version>1.0.0-rc05</Version>
     <PackageReleaseNotes>
-      Azure ServiceBus listener got NRE somewhere.
+      Setting authenticationType.
     </PackageReleaseNotes>
   </PropertyGroup>
 
