@@ -6,9 +6,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
 
-    <Version>2.0.14</Version>
+    <Version>2.0.15</Version>
     <PackageReleaseNotes>
-      Added principal to ScopeClosing
+      Adjusted debug prints
     </PackageReleaseNotes>
   </PropertyGroup>
 
@@ -17,7 +17,7 @@
     <Authors>jgauffin</Authors>
     <Description>Command/Query abstraction library for .NET applications.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2017 © jgauffin. All rights reserved.</Copyright>
+    <Copyright>Copyright 2019 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

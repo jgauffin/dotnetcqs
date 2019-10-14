@@ -177,10 +177,14 @@ namespace DotNetCqs.Queues
 
         private async Task ProcessMessageAsync(DequeuedMessage msg)
         {
+            var name = msg.Principal?.Identity.IsAuthenticated == true
+                ? msg.Principal.Identity.Name
+                : "Anonymous";
+
             var outboundMessages = new List<Message>();
             using (var scope = _scopeFactory.CreateScope())
             {
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}] Created scope.");
+                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{name}] Created scope {scope.GetHashCode()}");
                 var e = new ScopeCreatedEventArgs(scope, msg.Principal, msg.Message);
                 ScopeCreated?.Invoke(this, e);
 
@@ -189,11 +193,11 @@ namespace DotNetCqs.Queues
                     : MessageInvokerFactory(scope);
                 var context = new InvocationContext(_queue.Name, msg.Principal, invoker, outboundMessages);
 
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}] Invoking message handler(s).");
+                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{name}] Invoking message handler(s) on scope {scope.GetHashCode()}");
                 await invoker.ProcessAsync(context, msg.Message);
 
                 ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState){Principal = e.Principal });
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{scope.GetHashCode()}]  Closing scope.");
+                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{name}]  Closing scope {scope.GetHashCode()}.");
             }
 
             if (msg.Principal == null)
@@ -211,7 +215,7 @@ namespace DotNetCqs.Queues
                 return;
             }
 
-            if (msg.Principal != null)
+            if (msg.Principal?.Identity.IsAuthenticated == true)
                 Logger?.Invoke(LogLevel.Info, _queue.Name,
                     $"Received[{msg.Principal.Identity.Name}]: {msg.Message.Body}");
             else
