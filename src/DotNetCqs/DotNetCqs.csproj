@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
 
-    <Version>2.0.16</Version>
+    <Version>2.0.17</Version>
     <PackageReleaseNotes>
       Added missing initializtions in the Message constructors
     </PackageReleaseNotes>

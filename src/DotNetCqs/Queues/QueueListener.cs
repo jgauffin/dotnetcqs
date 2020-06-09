@@ -101,6 +101,7 @@ namespace DotNetCqs.Queues
                 {
                     Logger?.Invoke(LogLevel.Error, _queue.Name,
                         "Message handling failed.\r\n" + ex);
+
                     await Task.Delay(1000, token);
                 }
 
@@ -112,11 +113,13 @@ namespace DotNetCqs.Queues
         {
             if (wrapper == null) throw new ArgumentNullException(nameof(wrapper));
 
+            bool saveWasAttempted = false;
             using (var session = _queue.BeginSession())
             {
                 try
                 {
                     await ReceiveSingleMessageAsync(wrapper, session);
+                    saveWasAttempted = true;
                     await session.SaveChanges();
                     session.Dispose();
                     if (wrapper.Message == null)
@@ -141,8 +144,11 @@ namespace DotNetCqs.Queues
                             {
                                 MessageQueue = _queue
                             });
-                        await session.SaveChanges();
-                        session.Dispose();
+                        if (!saveWasAttempted)
+                        {
+                            await session.SaveChanges();
+                            session.Dispose();
+                        }
                         await Task.Delay(1000, token);
                     }
                     else if (wrapper.AttemptCount < RetryAttempts.Length)
@@ -159,7 +165,12 @@ namespace DotNetCqs.Queues
                             {
                                 MessageQueue = _queue
                             });
-                        await session.SaveChanges();
+                        if (!saveWasAttempted)
+                        {
+                            await session.SaveChanges();
+                        }
+
+                        await Task.Delay(1000, token);
                     }
                 }
             }
