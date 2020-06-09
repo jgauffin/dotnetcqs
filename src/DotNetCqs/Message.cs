@@ -22,7 +22,7 @@ namespace DotNetCqs
                                             ((Message) body).Body + ").");
 
             MessageId = GuidFactory.Create();
-            Body = body ?? throw new ArgumentNullException(nameof(body));
+            Body = body;
             Properties = new Dictionary<string, string>();
         }
 
@@ -41,12 +41,13 @@ namespace DotNetCqs
                                             ((Message) body).Body + ").");
 
             MessageId = GuidFactory.Create();
-            Body = body ?? throw new ArgumentNullException(nameof(body));
-            Properties = properties;
+            Body = body;
+            Properties = properties ?? new Dictionary<string, string>();
         }
 
         protected Message()
         {
+            Properties = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace DotNetCqs
         ///     </para>
         ///     <para>All non-application specific properties should start with <c>X-</c>.</para>
         /// </remarks>
-        public IDictionary<string, string> Properties { get; }
+        public IDictionary<string, string> Properties { get; private set; }
 
 
         /// <summary>
