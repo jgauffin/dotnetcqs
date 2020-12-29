@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Autofac.xml</DocumentationFile>
 
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <PackageReleaseNotes>
-      Testing it out
+      Using GetHashCode from autofac scope.
     </PackageReleaseNotes>
   </PropertyGroup>
 

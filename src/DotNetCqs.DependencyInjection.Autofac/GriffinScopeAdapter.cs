@@ -6,17 +6,16 @@ namespace DotNetCqs.DependencyInjection.Autofac
 {
     public class AutofacScopeAdapter : IHandlerScope
     {
-        private ILifetimeScope _scope;
+        private readonly ILifetimeScope _scope;
 
         public AutofacScopeAdapter(ILifetimeScope scope)
         {
-            _scope = scope;
+            _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
         public void Dispose()
         {
-            _scope?.Dispose();
-            _scope = null;
+            _scope.Dispose();
         }
 
         public IEnumerable<object> ResolveAll(Type messageHandlerType)
@@ -39,6 +38,11 @@ namespace DotNetCqs.DependencyInjection.Autofac
         public IEnumerable<T> ResolveDependency<T>()
         {
             return _scope.Resolve<IEnumerable<T>>();
+        }
+
+        public override int GetHashCode()
+        {
+            return _scope.GetHashCode();
         }
     }
 }

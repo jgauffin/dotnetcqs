@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.DependencyInjection.Microsoft.xml</DocumentationFile>
 
-    <Version>3.1.10</Version>
+    <Version>2.2.0.2</Version>
     <PackageReleaseNotes>
-      For Microsoft.Extensions.DependencyInjection.Abstractions v3.1.10
+      Using GetHashCode from Microsofts scope.
     </PackageReleaseNotes>
   </PropertyGroup>
 
@@ -25,7 +25,7 @@
   
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

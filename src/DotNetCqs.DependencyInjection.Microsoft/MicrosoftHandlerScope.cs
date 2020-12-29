@@ -37,5 +37,10 @@ namespace DotNetCqs.DependencyInjection.Microsoft
         {
             return _scope.ServiceProvider.GetServices(messageHandlerType);
         }
+
+        public override int GetHashCode()
+        {
+            return _scope.GetHashCode();
+        }
     }
 }
