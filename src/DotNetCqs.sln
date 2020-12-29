@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs", "DotNetCqs\DotNetCqs.csproj", "{17D91889-302A-4DDF-9BD8-C1DF04B549B8}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.DependencyInjection.Autofac", "DotNetCqs.DependencyInjection.Autofac\DotNetCqs.DependencyInjection.Autofac.csproj", "{473B10ED-6B00-49BA-B21C-028205932DF9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetCqs.DependencyInjection.Autofac.Tests", "DotNetCqs.DependencyInjection.Autofac.Tests\DotNetCqs.DependencyInjection.Autofac.Tests.csproj", "{3C403C3C-C450-4BC9-A1FD-D28F0589C985}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCqs.Abstractions", "DotNetCqs.Abstractions\DotNetCqs.Abstractions.csproj", "{C35EB635-2CF2-48B9-9810-2B9FC88CA283}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C403C3C-C450-4BC9-A1FD-D28F0589C985}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C35EB635-2CF2-48B9-9810-2B9FC88CA283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C35EB635-2CF2-48B9-9810-2B9FC88CA283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C35EB635-2CF2-48B9-9810-2B9FC88CA283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C35EB635-2CF2-48B9-9810-2B9FC88CA283}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

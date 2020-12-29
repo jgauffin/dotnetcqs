@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <RootNamespace>DotNetCqs.Queues.AdoNet</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
     
-    <Version>1.0.7</Version>
+    <Version>1.0.9</Version>
     <PackageReleaseNotes>
       ADO.NET transaction isolation level can now be configured using AdoNetMessageQueueProvider.
     </PackageReleaseNotes>

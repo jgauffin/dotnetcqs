@@ -10,7 +10,7 @@ namespace DotNetCqs.MessageProcessor
     /// <summary>
     ///     Context for the queue listener.
     /// </summary>
-    public class InvocationContext : IInvocationContext
+    public class InvocationContext : IInvocationContext, IContainsQueueName
     {
         private readonly IMessageInvoker _messageInvoker;
         private readonly List<Message> _outboundMessages;
@@ -71,7 +71,7 @@ namespace DotNetCqs.MessageProcessor
         {
             //TODO: Send message on queue and wait for response in the reply queue (filtering on correlation-id)
 
-            var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker);
+            var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker, QueueName);
             return ctx.QueryAsync(query);
         }
 

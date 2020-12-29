@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCqs.DependencyInjection;
 using DotNetCqs.DependencyInjection.Microsoft;
-using DotNetCqs.MessageProcessor;
-using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Handlers;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest.Messages.Messages;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Xunit;
 
 namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest
@@ -23,6 +21,9 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest
 
         public ScenarioTest(TestDbFixture fixture)
         {
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            LogConfiguration.LogFactory = loggerFactory;
+
             this._fixture = fixture;
             _fixture.ClearQueue("inbound");
             _fixture.ClearQueue("outbound");
@@ -50,11 +51,9 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests.CompleteTest
                 await session.SaveChanges();
             }
             var listener1 = new QueueListener(inboundQueue, outboundQueue, scopeFactory);
-            listener1.MessageInvokerFactory=scope => new MessageInvoker(scope);
-            listener1.Logger = (level, queue, msg) => Console.WriteLine($"{level} {queue} {msg}");
+            listener1.MessageInvokerFactory = scope => new MessageInvoker(scope);
             var listener2 = new QueueListener(outboundQueue, outboundQueue, scopeFactory);
             listener2.MessageInvokerFactory = scope => new MessageInvoker(scope);
-            listener2.Logger = (level, queue, msg) => Console.WriteLine($"{level} {queue} {msg}");
 
             var t1 = listener1.RunAsync(token.Token);
             var t2 = listener2.RunAsync(token.Token);

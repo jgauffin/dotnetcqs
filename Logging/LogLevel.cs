@@ -1,4 +1,4 @@
-﻿namespace DotNetCqs.Queues
+﻿namespace DotNetCqs.Logging
 {
     public enum LogLevel
     {

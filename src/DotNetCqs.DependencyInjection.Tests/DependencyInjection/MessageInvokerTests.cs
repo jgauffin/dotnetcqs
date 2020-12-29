@@ -24,7 +24,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IMessageHandler<Simple>)).Returns(new[] {handler});
             var msg = new Message(new Simple());
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
 
             await sut.ProcessAsync(context, msg);
 
@@ -40,7 +40,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IMessageHandler<Simple>)).Returns(new[] { handler, handler2 });
             var msg = new Message(new Simple());
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
 
             await sut.ProcessAsync(context, msg);
 
@@ -57,7 +57,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IMessageHandler<Simple>)).Returns(new[] { handler, handler2 });
             var msg = new Message(new Simple());
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
 
             Func<Task> actual = () => sut.ProcessAsync(context, msg);
 
@@ -74,7 +74,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IMessageHandler<Simple>)).Returns(new[] { handler, handler2 });
             var msg = new Message(new Simple());
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
 
             Func<Task> actual = () => sut.ProcessAsync(context, msg);
 
@@ -91,7 +91,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IQueryHandler<OneQuery, OneResult>)).Returns(new[] { handler});
 
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
             await sut.ProcessAsync(context, new OneQuery());
 
             context.Replies.First().Body.Should().BeSameAs(result);
@@ -106,7 +106,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IQueryHandler<OneQuery, OneResult>)).Returns(new[] { handler, handler });
 
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
             Func<Task> actual = () => sut.ProcessAsync(context, new OneQuery());
 
             actual.Should().Throw<OnlyOneQueryHandlerAllowedException>();
@@ -120,7 +120,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IQueryHandler<OneQuery, OneResult>)).Returns(new object[0]);
 
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
             Func<Task> actual = () => sut.ProcessAsync(context, new OneQuery());
 
             actual.Should().Throw<NoHandlerRegisteredException>();
@@ -142,7 +142,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             scope.Create(typeof(IQueryHandler<QueryTwo, QueryTwoResult>)).Returns(new[] { handler2 });
 
             var sut = new MessageInvoker(scope);
-            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut);
+            var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
             await sut.ProcessAsync(context, new OneQuery());
 
             expected.Should().BeSameAs(result2, "because it should not be enqueued as queries that comes from the queue");

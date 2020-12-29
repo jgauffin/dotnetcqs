@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DotNetCqs.Logging;
 using Microsoft.Azure.ServiceBus.Core;
+using Microsoft.Extensions.Logging;
 using AzureMessage= Microsoft.Azure.ServiceBus.Message;
 
 namespace DotNetCqs.Queues.Azure.ServiceBus
@@ -12,11 +15,14 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
         private readonly MessageConverter _converter;
         private readonly List<AzureMessage> _messagesReceived = new List<AzureMessage>();
         private readonly List<AzureMessage> _messagesToSend = new List<AzureMessage>();
+        private readonly string _queueName;
         private readonly MessageReceiver _messageReceiver;
         private readonly MessageSender _messageSender;
+        private ILogger _logger = LogConfiguration.LogFactory.CreateLogger(typeof(AzureMessageQueueSession));
 
-        public AzureMessageQueueSession(MessageReceiver messageReceiver, MessageSender messageSender, IMessageSerializer<string> messageSerializer)
+        public AzureMessageQueueSession(string queueName, MessageReceiver messageReceiver, MessageSender messageSender, IMessageSerializer<string> messageSerializer)
         {
+            _queueName = queueName;
             _messageReceiver = messageReceiver;
             _messageSender = messageSender;
             _converter = new MessageConverter(messageSerializer);
@@ -48,6 +54,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
         {
             foreach (var message in messages)
             {
+                _logger.Debug(_queueName, "Enqueueing", principal, message);
                 var msg = _converter.ToAzureMessage(message, principal);
                 _messagesToSend.Add(msg);
             }
@@ -58,6 +65,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
         {
             foreach (var message in messages)
             {
+                _logger.Debug(_queueName, "Enqueueing", messageBeingProcessed: message);
                 var msg = _converter.ToAzureMessage(message, null);
                 _messagesToSend.Add(msg);
             }
@@ -66,6 +74,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
 
         public Task EnqueueAsync(ClaimsPrincipal principal, Message message)
         {
+            _logger.Debug(_queueName, "Enqueueing", principal, message);
             var msg = _converter.ToAzureMessage(message, principal);
             _messagesToSend.Add(msg);
             return Task.CompletedTask;
@@ -73,6 +82,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
 
         public Task EnqueueAsync(Message message)
         {
+            _logger.Debug(_queueName, "Enqueueing", messageBeingProcessed: message);
             var msg = _converter.ToAzureMessage(message, null);
             msg.TimeToLive = TimeSpan.FromMinutes(1);
             _messagesToSend.Add(msg);

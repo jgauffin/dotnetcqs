@@ -13,7 +13,7 @@ namespace DotNetCqs.DependencyInjection
     /// <remarks>
     /// </remarks>
     /// <seealso cref="IMessageInvoker" />
-    public class MessageInvocationContext : IMessageContext, IOutboundMessages
+    public class MessageInvocationContext : IMessageContext, IOutboundMessages, IContainsQueueName
     {
         private readonly IMessageInvoker _messageInvoker;
         private readonly List<Message> _outboundMessages = new List<Message>();
@@ -25,7 +25,7 @@ namespace DotNetCqs.DependencyInjection
         /// <param name="principal"></param>
         /// <param name="message"></param>
         /// <param name="messageInvoker"></param>
-        public MessageInvocationContext(ClaimsPrincipal principal, Message message, IMessageInvoker messageInvoker)
+        public MessageInvocationContext(ClaimsPrincipal principal, Message message, IMessageInvoker messageInvoker, string queueName)
         {
             _messageInvoker = messageInvoker;
             Principal = principal;
@@ -74,11 +74,12 @@ namespace DotNetCqs.DependencyInjection
 
         public async Task<TResult> QueryAsync<TResult>(Query<TResult> query)
         {
-            var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker);
+            var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker, QueueName);
             return await ctx.QueryAsync(query);
         }
 
         public IList<Message> OutboundMessages => _outboundMessages;
         public IList<Message> Replies => _replies;
+        public string QueueName { get; }
     }
 }

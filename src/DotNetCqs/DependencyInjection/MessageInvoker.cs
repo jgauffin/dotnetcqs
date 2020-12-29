@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using DotNetCqs.Logging;
 using DotNetCqs.MessageProcessor;
 using DotNetCqs.Queues;
+using Microsoft.Extensions.Logging;
 
 namespace DotNetCqs.DependencyInjection
 {
@@ -13,7 +15,7 @@ namespace DotNetCqs.DependencyInjection
     {
         private readonly IHandlerScope _scope;
         private IOutboundMessageRouter _outboundMessageRouter;
-        public LoggerHandler Logger;
+        private ILogger _logger = LogConfiguration.LogFactory.CreateLogger(typeof(MessageInvoker));
 
         public MessageInvoker(IHandlerScope scope)
         {
@@ -25,7 +27,6 @@ namespace DotNetCqs.DependencyInjection
             _outboundMessageRouter = outboundMessageRouter;
             _scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
-
 
         /// <summary>
         ///     Create a task per handler and invoke them in parallel.
@@ -43,31 +44,32 @@ namespace DotNetCqs.DependencyInjection
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (message == null) throw new ArgumentNullException(nameof(message));
 
-            var messageContext = new MessageInvocationContext(context.Principal, message, this);
+            var queueName = (context as IContainsQueueName)?.QueueName ?? "";
+            var messageContext = new MessageInvocationContext(context.Principal, message, this, queueName);
 
             // when messages arrive through the listener there is not difference between 
             // messages and queries, since the result should be delivered over the queue.
             if (IsQuery(message.Body))
-                await InvokeQueryHandler(messageContext, message);
+                await InvokeQueryHandler(queueName, messageContext, message);
             else
-                await InvokeMessageHandlers(messageContext, message);
+                await InvokeMessageHandlers(queueName, messageContext, message);
 
 
             // someone else is taking care of the outbound messages
             if (_outboundMessageRouter != null)
             {
-                Logger?.Invoke(LogLevel.Debug, "", "Invoking IOutboundMessageRouter.");
+                _logger.Debug(queueName, "Invoking " + _outboundMessageRouter, context.Principal, message);
                 await _outboundMessageRouter.SendAsync(messageContext);
             }
             foreach (var msg in messageContext.OutboundMessages)
             {
-                Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), $"Sending {msg.Body.GetType()}");
+                _logger.Info(queueName, $"Sending {msg.Body.GetType()}", context.Principal, message);
                 await context.SendAsync(msg);
             }
 
             foreach (var msg in messageContext.Replies)
             {
-                Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), $"Replying with {msg.Body.GetType()}");
+                _logger.Info(queueName, $"Replying with {msg.Body ?? "null"}", context.Principal, message);
                 await context.ReplyAsync(msg);
             }
 
@@ -112,21 +114,21 @@ namespace DotNetCqs.DependencyInjection
             throw new InvalidOperationException("Failed to find result type for " + cqsObject.GetType());
         }
 
-        private async Task InvokeMessageHandlers(IMessageContext context, Message message)
+        private async Task InvokeMessageHandlers(string queueName, IMessageContext context, Message message)
         {
             var messageType = message.Body.GetType();
-            var handleMethodParameterTypes = new Type[] {typeof(IMessageContext), messageType};
+            var handleMethodParameterTypes = new Type[] { typeof(IMessageContext), messageType };
             var type = typeof(IMessageHandler<>).MakeGenericType(messageType);
             var handlers = _scope.Create(type).ToList();
             if (handlers.Count == 0)
             {
-                Logger?.Invoke(LogLevel.Warning, message.MessageId.ToString("N"), "Missing handler for " + message.Body.GetType());
+                _logger.Warning(queueName, "Missing handler for " + message.Body.GetType(), principal: context.Principal, messageBeingProcessed: message);
                 var e = new HandlerMissingEventArgs(context.Principal, message, _scope);
                 HandlerMissing?.Invoke(this, e);
                 if (e.Handler != null)
                     handlers.Add(e.Handler);
                 else if (e.ThrowException)
-                    throw new NoHandlerRegisteredException("Failed to find handler for '" + message.Body + "'.");
+                    throw new NoHandlerRegisteredException($"Failed to find handler for '{message.Body}'.");
                 else
                     return;
             }
@@ -137,7 +139,7 @@ namespace DotNetCqs.DependencyInjection
                 var tasks = handlers.Select(async handler =>
                 {
                     var mi = handler.GetType().GetMethod("HandleAsync", handleMethodParameterTypes);
-                    var task = (Task) mi.Invoke(handler, new[] {context, message.Body});
+                    var task = (Task)mi.Invoke(handler, new[] { context, message.Body });
                     Stopwatch sw = null;
                     var args1 = new InvokingHandlerEventArgs(_scope, handler, message)
                     {
@@ -148,7 +150,7 @@ namespace DotNetCqs.DependencyInjection
                         if (HandlerInvoked != null)
                             sw = Stopwatch.StartNew();
 
-                        Logger?.Invoke(LogLevel.Info, message.MessageId.ToString("N"), "Invoking " + handler.GetType());
+                        _logger.Info(queueName, "Invoking " + handler.GetType(), context.Principal, message);
                         InvokingHandler?.Invoke(this, args1);
                         await task;
                         sw?.Stop();
@@ -162,8 +164,8 @@ namespace DotNetCqs.DependencyInjection
                     }
                     catch (Exception ex)
                     {
-                        Logger?.Invoke(LogLevel.Error, message.MessageId.ToString("N"),
-                            $"Handler failed: {handler.GetType()}, Exception: {ex}");
+                        _logger.Error(queueName,
+                            $"Handler failed: {handler.GetType()}", ex, context.Principal, message);
                         var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
                             sw?.Elapsed ?? TimeSpan.Zero)
                         {
@@ -223,10 +225,13 @@ namespace DotNetCqs.DependencyInjection
                         {
                             Principal = context.Principal
                         };
-                        HandlerInvoked?.Invoke(this,e);
+                        HandlerInvoked?.Invoke(this, e);
                     }
                     catch (Exception ex)
                     {
+                        _logger.Error(queueName,
+                            $"Handler failed: {handler.GetType()}", ex, context.Principal, message);
+
                         var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
                             sw?.Elapsed ?? TimeSpan.Zero)
                         {
@@ -244,7 +249,7 @@ namespace DotNetCqs.DependencyInjection
             }
         }
 
-        private async Task InvokeQueryHandler(MessageInvocationContext context, Message message)
+        private async Task InvokeQueryHandler(string queueName, MessageInvocationContext context, Message message)
         {
             var resultType = GetQueryResultType(message.Body);
 
@@ -281,10 +286,13 @@ namespace DotNetCqs.DependencyInjection
                 {
                     Principal = context.Principal
                 };
-                HandlerInvoked?.Invoke(this,e);
+                HandlerInvoked?.Invoke(this, e);
             }
             catch (Exception ex)
             {
+                _logger.Error(queueName,
+                    $"Handler failed: {handler.GetType()}", ex, context.Principal, message);
+
                 var e = new HandlerInvokedEventArgs(_scope, handler, message, args1.ApplicationState,
                     sw?.Elapsed ?? TimeSpan.Zero)
                 {

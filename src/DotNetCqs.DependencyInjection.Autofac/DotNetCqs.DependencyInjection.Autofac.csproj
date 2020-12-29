@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Autofac.xml</DocumentationFile>
 
-    <Version>1.0.0-rc01</Version>
+    <Version>1.0.0</Version>
     <PackageReleaseNotes>
       Testing it out
     </PackageReleaseNotes>
@@ -16,7 +16,7 @@
     <Authors>jgauffin</Authors>
     <Description>Azure service bus integration for DotNetCqs.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2019 © jgauffin. All rights reserved.</Copyright>
+    <Copyright>Copyright 2020 © jgauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

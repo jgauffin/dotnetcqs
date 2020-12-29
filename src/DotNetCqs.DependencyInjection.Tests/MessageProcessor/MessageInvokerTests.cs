@@ -18,7 +18,7 @@ namespace DotNetCqs.Tests.MessageProcessor
             var handler = new MyHandler();
             var msg = new Message(new MyQuery());
             var sut = new MessageInvoker(scope);
-            var queryContext = new ExecuteQueriesInvocationContext(new ClaimsPrincipal(), sut);
+            var queryContext = new ExecuteQueriesInvocationContext(new ClaimsPrincipal(), sut, "Direct");
             scope.Create(typeof(IQueryHandler<MyQuery, string>)).Returns(new object[] {handler});
 
             await sut.ProcessAsync(queryContext, msg);
@@ -33,7 +33,7 @@ namespace DotNetCqs.Tests.MessageProcessor
             var handler = new MyHandler {Result = "Word!"};
             var msg = new Message(new MyQuery());
             var sut = new MessageInvoker(scope);
-            var queryContext = new ExecuteQueriesInvocationContext(new ClaimsPrincipal(), sut);
+            var queryContext = new ExecuteQueriesInvocationContext(new ClaimsPrincipal(), sut, "Direct");
             scope.Create(typeof(IQueryHandler<MyQuery, string>)).Returns(new object[] {handler});
 
             await sut.ProcessAsync(queryContext, msg);

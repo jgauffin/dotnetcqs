@@ -22,7 +22,7 @@ namespace DotNetCqs.Queues.Azure.ServiceBus.ConsoleApp
             //var conStr = config["ConnectionString"];
             //var queueName = config["QueueName"];
             var conStr =
-                "Endpoint=sb://coderrlive.servicebus.windows.net/;SharedAccessKeyName=App;SharedAccessKey=zV623X84oZuyWEgn/PR21a72/snkxZA/r7PIMJYWEbY=";
+                "conStr";
             var queueName = "labb";
 
             var claims = new List<Claim>()

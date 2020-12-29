@@ -41,7 +41,7 @@ namespace DotNetCqs.Bus
         {
             if (principal == null) throw new ArgumentNullException(nameof(principal));
             if (query == null) throw new ArgumentNullException(nameof(query));
-            var ctx = new ExecuteQueriesInvocationContext(principal, _messageInvoker);
+            var ctx = new ExecuteQueriesInvocationContext(principal, _messageInvoker, "Direct");
             return await ctx.QueryAsync(query);
         }
 
@@ -57,7 +57,7 @@ namespace DotNetCqs.Bus
         public async Task<TResult> QueryAsync<TResult>(Query<TResult> query)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
-            var ctx = new ExecuteQueriesInvocationContext(null, _messageInvoker);
+            var ctx = new ExecuteQueriesInvocationContext(null, _messageInvoker, "Direct");
             return await ctx.QueryAsync(query);
         }
     }

@@ -7,6 +7,9 @@ using Autofac.Features.Scanning;
 
 namespace DotNetCqs.DependencyInjection.Autofac
 {
+    /// <summary>
+    /// Extensions used to register messaging features in the container.
+    /// </summary>
     public static class ContainerBuilderExtensions
     {
         public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterQueryHandlers(this ContainerBuilder builer, params Assembly[] assemblies)

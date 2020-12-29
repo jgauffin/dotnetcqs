@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCqs.DependencyInjection;
 using DotNetCqs.MessageProcessor;
 using DotNetCqs.Queues.AdoNet.IntegrationTests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -26,6 +23,9 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
 
         public QueueListenerTests(TestDbFixture fixture)
         {
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            LogConfiguration.LogFactory = loggerFactory;
+
             fixture.ClearQueue("QLInbound");
             _inboundQueue = fixture.OpenQueue("QLInbound");
             _scopeFactory = Substitute.For<IHandlerScopeFactory>();
@@ -52,7 +52,6 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
             _queueListener.PoisonMessageDetected += (o,e) => semaphore.Release();
 
             _queueListener.RetryAttempts = new[] {TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10),};
-            _queueListener.Logger = (level, name, message) => Debug.WriteLine(message);
             var t = _queueListener.RunAsync(token.Token).ConfigureAwait(false).GetAwaiter();
             var actual = await semaphore.WaitAsync(10000);
 
@@ -74,7 +73,6 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
                 .Do(x => semaphore.Release());
 
             _queueListener.RetryAttempts = new[] { TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10), };
-            _queueListener.Logger = (level, name, message) => Debug.WriteLine(message);
             var t = _queueListener.RunAsync(token.Token).ConfigureAwait(false).GetAwaiter();
             var actual = await semaphore.WaitAsync(500);
 
@@ -96,7 +94,6 @@ namespace DotNetCqs.Queues.AdoNet.IntegrationTests
                 .Do(x => semaphore.Release());
 
             _queueListener.RetryAttempts = new[] { TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10), };
-            _queueListener.Logger = (level, name, message) => Debug.WriteLine(message);
             var t = _queueListener.RunAsync(token.Token).ConfigureAwait(false).GetAwaiter();
             var actual = await semaphore.WaitAsync(500);
 

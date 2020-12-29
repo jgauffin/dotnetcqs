@@ -16,13 +16,16 @@ namespace DotNetCqs.Queues.Azure.ServiceBus
             Name = queueName;
         }
 
+        /// <summary>
+        /// Queue name
+        /// </summary>
         public string Name { get; }
 
         public IMessageSerializer<string> MessageSerializer { get; set; }
 
         public IMessageQueueSession BeginSession()
         {
-            return new AzureMessageQueueSession(_receiver, _sender, MessageSerializer);
+            return new AzureMessageQueueSession(Name, _receiver, _sender, MessageSerializer);
         }
 
         //public async Task ReleaseEnqueueAsync(object identifier)

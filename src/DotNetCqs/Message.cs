@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DotNetCqs
 {
@@ -19,7 +20,7 @@ namespace DotNetCqs
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (body is Message)
                 throw new ArgumentException("Cannot wrap a Message in a Message, (inner type: " +
-                                            ((Message) body).Body + ").");
+                                            ((Message)body).Body + ").");
 
             MessageId = GuidFactory.Create();
             Body = body;
@@ -38,7 +39,7 @@ namespace DotNetCqs
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (body is Message)
                 throw new ArgumentException("Cannot wrap a Message in a Message, (inner type: " +
-                                            ((Message) body).Body + ").");
+                                            ((Message)body).Body + ").");
 
             MessageId = GuidFactory.Create();
             Body = body;
@@ -118,6 +119,18 @@ namespace DotNetCqs
             {
                 CorrelationId = correlationId
             };
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+
+            var props = Properties != null
+                ? string.Join(",", Properties.Select(x => $"{x.Key}={x.Value}"))
+                : "";
+            return props == ""
+                ? $"id: {MessageId:N}, body: {Body}"
+                : $"id: {MessageId:N}, props: ({props}), body: {Body}";
         }
     }
 }

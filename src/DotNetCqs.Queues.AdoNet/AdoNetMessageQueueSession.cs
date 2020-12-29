@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DotNetCqs.Logging;
 
 namespace DotNetCqs.Queues.AdoNet
 {
@@ -35,8 +36,6 @@ namespace DotNetCqs.Queues.AdoNet
             _transaction = transaction ?? throw new ArgumentNullException(nameof(transaction));
             _connection = transaction.Connection;
         }
-
-        public LoggerHandler Logger;
 
         public Task<Message> Dequeue(TimeSpan suggestedWaitTime)
         {

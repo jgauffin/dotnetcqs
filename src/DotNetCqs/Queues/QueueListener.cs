@@ -5,7 +5,9 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetCqs.DependencyInjection;
+using DotNetCqs.Logging;
 using DotNetCqs.MessageProcessor;
+using Microsoft.Extensions.Logging;
 
 namespace DotNetCqs.Queues
 {
@@ -18,8 +20,7 @@ namespace DotNetCqs.Queues
         private readonly IMessageQueue _queue;
         private readonly IHandlerScopeFactory _scopeFactory;
         private TimeSpan[] _retryAttempts = new TimeSpan[0];
-
-        public LoggerHandler Logger;
+        private ILogger _logger = LogConfiguration.LogFactory.CreateLogger(typeof(QueueListener));
 
         /// <summary>
         ///     Creates a new instance of <see cref="QueueListener" />.
@@ -99,14 +100,18 @@ namespace DotNetCqs.Queues
                 }
                 catch (Exception ex)
                 {
-                    Logger?.Invoke(LogLevel.Error, _queue.Name,
-                        "Message handling failed.\r\n" + ex);
+                    if (ex is TaskCanceledException)
+                    {
+                        break;
+                    }
 
+                    _logger.Error(_queue.Name, "Message handling failed.", ex);
                     await Task.Delay(1000, token);
                 }
 
             }
-            Logger?.Invoke(LogLevel.Info,  _queue.Name,"Told to shutdown by the cancellationToken.");
+
+            _logger.Info(_queue.Name, "Told to shutdown by the cancellationToken.");
         }
 
         private async Task HandleOneMessage(CancellationToken token, MsgWrapper wrapper)
@@ -127,14 +132,12 @@ namespace DotNetCqs.Queues
                 }
                 catch (SerializationException ex)
                 {
-                    Logger?.Invoke(LogLevel.Warning, _queue.Name,
-                        $"Failed to deserialize message, throwing it away. {ex}");
+                    _logger.Warning(_queue.Name, $"[attempt: {wrapper.AttemptCount}] Failed to deserialize message, throwing it away.", ex, wrapper.Message?.Principal, wrapper.Message?.Message);
                     await session.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    Logger?.Invoke(LogLevel.Warning, _queue.Name,
-                        $"Message handling failed [attempt: {wrapper.AttemptCount}] {wrapper.Message?.Message?.Body} , {ex}");
+                    _logger.Warning(_queue.Name, $"[attempt: {wrapper.AttemptCount}] Message handling failed.", ex, wrapper.Message?.Principal, wrapper.Message?.Message);
 
                     // do not retry at all, consume invalid messages
                     if (RetryAttempts.Length == 0)
@@ -158,7 +161,7 @@ namespace DotNetCqs.Queues
                     }
                     else
                     {
-                        Logger?.Invoke(LogLevel.Error, _queue.Name, "Removing poison message: " + wrapper.Message?.Message?.Body);
+                        _logger.Error(_queue.Name, "[attempt: {wrapper.AttemptCount}] Removing poison message.", ex, wrapper.Message?.Principal, wrapper.Message?.Message);
 
                         PoisonMessageDetected?.Invoke(this,
                             new PoisonMessageEventArgs(wrapper.Message?.Principal, wrapper.Message?.Message, ex)
@@ -188,14 +191,10 @@ namespace DotNetCqs.Queues
 
         private async Task ProcessMessageAsync(DequeuedMessage msg)
         {
-            var name = msg.Principal?.Identity.IsAuthenticated == true
-                ? msg.Principal.Identity.Name
-                : "Anonymous";
-
             var outboundMessages = new List<Message>();
             using (var scope = _scopeFactory.CreateScope())
             {
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{name}] Created scope {scope.GetHashCode()}");
+                _logger.Debug(_queue.Name, $"Created scope {scope.GetHashCode()}",msg.Principal, msg.Message);
                 var e = new ScopeCreatedEventArgs(scope, msg.Principal, msg.Message);
                 ScopeCreated?.Invoke(this, e);
 
@@ -204,11 +203,10 @@ namespace DotNetCqs.Queues
                     : MessageInvokerFactory(scope);
                 var context = new InvocationContext(_queue.Name, msg.Principal, invoker, outboundMessages);
 
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{name}] Invoking message handler(s) on scope {scope.GetHashCode()}");
                 await invoker.ProcessAsync(context, msg.Message);
 
-                ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState){Principal = e.Principal });
-                Logger?.Invoke(LogLevel.Debug, _queue.Name, $"[{name}]  Closing scope {scope.GetHashCode()}.");
+                ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState) { Principal = e.Principal });
+                _logger.Debug( _queue.Name, $"Closing scope {scope.GetHashCode()}.", msg.Principal, msg.Message);
             }
 
             if (msg.Principal == null)
@@ -226,11 +224,7 @@ namespace DotNetCqs.Queues
                 return;
             }
 
-            if (msg.Principal?.Identity.IsAuthenticated == true)
-                Logger?.Invoke(LogLevel.Info, _queue.Name,
-                    $"Received[{msg.Principal.Identity.Name}]: {msg.Message.Body}");
-            else
-                Logger?.Invoke(LogLevel.Info, _queue.Name, $"Received[Anonymous]: {msg.Message.Body}");
+            _logger.Debug(_queue.Name, "Received message " + msg.Message.Body.GetType().FullName, msg.Principal, msg.Message);
 
             wrapper.Assign(msg, _retryAttempts.Length);
             await ProcessMessageAsync(msg);

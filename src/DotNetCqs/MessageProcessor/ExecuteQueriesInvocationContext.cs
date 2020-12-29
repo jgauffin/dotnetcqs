@@ -13,19 +13,23 @@ namespace DotNetCqs.MessageProcessor
     ///         Execute queries directly while all other messages are enqueued in the supplied bus.
     ///     </para>
     /// </remarks>
-    public class ExecuteQueriesInvocationContext : IInvocationContext
+    public class ExecuteQueriesInvocationContext : IInvocationContext, IContainsQueueName
     {
         private readonly IMessageInvoker _messageInvoker;
 
-        public ExecuteQueriesInvocationContext(ClaimsPrincipal principal, IMessageInvoker messageInvoker)
+        public ExecuteQueriesInvocationContext(ClaimsPrincipal principal, IMessageInvoker messageInvoker,
+            string queueName)
         {
             Principal = principal;
             _messageInvoker = messageInvoker;
+            QueueName = queueName;
         }
 
         public List<Message> Messages { get; } = new List<Message>();
 
         public List<Message> Replies { get; } = new List<Message>();
+
+        public string QueueName { get; }
 
         public ClaimsPrincipal Principal { get; }
 
@@ -46,9 +50,9 @@ namespace DotNetCqs.MessageProcessor
 
         public async Task<TResult> QueryAsync<TResult>(Query<TResult> query)
         {
-            var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker);
+            var ctx = new ExecuteQueriesInvocationContext(Principal, _messageInvoker, QueueName);
             await _messageInvoker.ProcessAsync(ctx, query);
-            return (TResult) ctx.Replies.First().Body;
+            return (TResult)ctx.Replies.First().Body;
         }
     }
 }
