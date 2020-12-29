@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.DependencyInjection.Microsoft.xml</DocumentationFile>
 
-    <Version>1.0.2</Version>
+    <Version>2.2.0</Version>
     <PackageReleaseNotes>
       First release
     </PackageReleaseNotes>
