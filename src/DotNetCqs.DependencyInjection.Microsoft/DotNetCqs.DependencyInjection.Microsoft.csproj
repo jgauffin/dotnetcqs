@@ -32,4 +32,5 @@
     <ProjectReference Include="..\DotNetCqs\DotNetCqs.csproj" />
   </ItemGroup>
 
+
 </Project>

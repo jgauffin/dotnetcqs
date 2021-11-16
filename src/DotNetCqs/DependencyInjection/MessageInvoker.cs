@@ -64,12 +64,14 @@ namespace DotNetCqs.DependencyInjection
             foreach (var msg in messageContext.OutboundMessages)
             {
                 _logger.Info(queueName, $"Sending {msg.Body.GetType()}", context.Principal, message);
+                msg.CorrelationId = message.MessageId;
                 await context.SendAsync(msg);
             }
 
             foreach (var msg in messageContext.Replies)
             {
                 _logger.Info(queueName, $"Replying with {msg.Body ?? "null"}", context.Principal, message);
+                msg.CorrelationId = message.MessageId;
                 await context.ReplyAsync(msg);
             }
 

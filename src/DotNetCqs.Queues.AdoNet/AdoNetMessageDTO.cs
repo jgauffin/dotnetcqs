@@ -13,16 +13,17 @@ namespace DotNetCqs.Queues.AdoNet
 
             Properties = message.Properties ?? new Dictionary<string, string>();
 
-            Properties.Add("X-MessageId", message.MessageId.ToString());
+
+            Properties["X-MessageId"] = message.MessageId.ToString();
             if (message.CorrelationId != Guid.Empty)
-                Properties.Add("X-CorrelationId", message.CorrelationId.ToString());
+                Properties["X-CorrelationId"] = message.CorrelationId.ToString();
 
             serializer.Serialize(message.Body, out var bodyStr, out var contentType);
             Body = bodyStr;
-            Properties.Add("X-ContentType", contentType);
+            Properties["X-ContentType"] = contentType;
 
 
-            ClaimIdentity = principal == null ? null : new IdentityDto((ClaimsIdentity) principal.Identity);
+            ClaimIdentity = principal == null ? null : new IdentityDto((ClaimsIdentity)principal.Identity);
         }
 
         protected AdoNetMessageDto()

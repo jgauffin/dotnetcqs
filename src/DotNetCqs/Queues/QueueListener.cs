@@ -194,7 +194,7 @@ namespace DotNetCqs.Queues
             var outboundMessages = new List<Message>();
             using (var scope = _scopeFactory.CreateScope())
             {
-                _logger.Debug(_queue.Name, $"Created scope {scope.GetHashCode()}",msg.Principal, msg.Message);
+                _logger.Debug(_queue.Name, $"Created scope {scope.GetHashCode()}", msg.Principal, msg.Message);
                 var e = new ScopeCreatedEventArgs(scope, msg.Principal, msg.Message);
                 ScopeCreated?.Invoke(this, e);
 
@@ -206,7 +206,7 @@ namespace DotNetCqs.Queues
                 await invoker.ProcessAsync(context, msg.Message);
 
                 ScopeClosing?.Invoke(this, new ScopeClosingEventArgs(scope, msg.Message, e.ApplicationState) { Principal = e.Principal });
-                _logger.Debug( _queue.Name, $"Closing scope {scope.GetHashCode()}.", msg.Principal, msg.Message);
+                _logger.Debug(_queue.Name, $"Closing scope {scope.GetHashCode()}.", msg.Principal, msg.Message);
             }
 
             if (msg.Principal == null)

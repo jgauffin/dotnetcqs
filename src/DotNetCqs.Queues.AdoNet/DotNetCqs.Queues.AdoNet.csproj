@@ -6,9 +6,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
     
-    <Version>1.0.9</Version>
+    <Version>1.0.10</Version>
     <PackageReleaseNotes>
-      ADO.NET transaction isolation level can now be configured using AdoNetMessageQueueProvider.
+      Message meta headers which already have been defined are now overwritten in AdoNetMessageDto.
     </PackageReleaseNotes>
   </PropertyGroup>
 
