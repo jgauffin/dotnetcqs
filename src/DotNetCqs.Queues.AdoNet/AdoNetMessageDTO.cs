@@ -22,7 +22,6 @@ namespace DotNetCqs.Queues.AdoNet
             Body = bodyStr;
             Properties["X-ContentType"] = contentType;
 
-
             ClaimIdentity = principal == null ? null : new IdentityDto((ClaimsIdentity)principal.Identity);
         }
 

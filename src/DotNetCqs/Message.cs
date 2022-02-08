@@ -37,9 +37,8 @@ namespace DotNetCqs
         public Message(object body, IDictionary<string, string> properties)
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
-            if (body is Message)
-                throw new ArgumentException("Cannot wrap a Message in a Message, (inner type: " +
-                                            ((Message)body).Body + ").");
+            if (body is Message message)
+                throw new ArgumentException($"Cannot wrap a Message in a Message, (inner type: {message.Body}).");
 
             MessageId = GuidFactory.Create();
             Body = body;

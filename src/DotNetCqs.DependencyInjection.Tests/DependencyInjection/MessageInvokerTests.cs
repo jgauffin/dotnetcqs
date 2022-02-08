@@ -49,7 +49,7 @@ namespace DotNetCqs.Tests.DependencyInjection
         }
 
         [Fact]
-        public void Should_let_exceptions_flow_to_allow_caller_to_decide_appropiate_response()
+        public async Task Should_let_exceptions_flow_to_allow_caller_to_decide_appropiate_response()
         {
             var scope = Substitute.For<IHandlerScope>();
             var handler = new TestHandler<Simple>();
@@ -61,12 +61,12 @@ namespace DotNetCqs.Tests.DependencyInjection
 
             Func<Task> actual = () => sut.ProcessAsync(context, msg);
 
-            actual.Should().Throw<HandlersFailedException>()
+            (await actual.Should().ThrowAsync<HandlersFailedException>())
                 .And.FailedHandlers[0].Exception.Message.Should().Be("Here comes Lore!");
         }
 
         [Fact]
-        public void Should_report_all_failed_handlers_in_the_exception()
+        public async Task Should_report_all_failed_handlers_in_the_exception()
         {
             var scope = Substitute.For<IHandlerScope>();
             var handler = new TestHandler<Simple>((ctx, msg2) => throw new InvalidOperationException("No Data :("));
@@ -78,7 +78,7 @@ namespace DotNetCqs.Tests.DependencyInjection
 
             Func<Task> actual = () => sut.ProcessAsync(context, msg);
 
-            actual.Should().Throw<HandlersFailedException>()
+            (await actual.Should().ThrowAsync<HandlersFailedException>())
                 .And.FailedHandlers.Count.Should().Be(2);
         }
 
@@ -98,7 +98,7 @@ namespace DotNetCqs.Tests.DependencyInjection
         }
 
         [Fact]
-        public void Should_abort_if_multiple_query_handlers_have_been_registered()
+        public async Task Should_abort_if_multiple_query_handlers_have_been_registered()
         {
             var scope = Substitute.For<IHandlerScope>();
             var result = new OneResult();
@@ -109,11 +109,11 @@ namespace DotNetCqs.Tests.DependencyInjection
             var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
             Func<Task> actual = () => sut.ProcessAsync(context, new OneQuery());
 
-            actual.Should().Throw<OnlyOneQueryHandlerAllowedException>();
+            await actual.Should().ThrowAsync<OnlyOneQueryHandlerAllowedException>();
         }
 
         [Fact]
-        public void Should_require_a_query_handler()
+        public async Task Should_require_a_query_handler()
         {
             var scope = Substitute.For<IHandlerScope>();
             var result = new OneResult();
@@ -123,7 +123,7 @@ namespace DotNetCqs.Tests.DependencyInjection
             var context = new ExecuteQueriesInvocationContext(ClaimsPrincipal.Current, sut, "Direct");
             Func<Task> actual = () => sut.ProcessAsync(context, new OneQuery());
 
-            actual.Should().Throw<NoHandlerRegisteredException>();
+            await actual.Should().ThrowAsync<NoHandlerRegisteredException>();
         }
 
         [Fact]

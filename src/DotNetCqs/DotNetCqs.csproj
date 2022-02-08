@@ -6,9 +6,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.xml</DocumentationFile>
 
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <PackageReleaseNotes>
-      Moved to only .NET standard 2.0
+      Bumped versions
     </PackageReleaseNotes>
   </PropertyGroup>
 
