@@ -7,12 +7,12 @@
     <Description>Command/Query abstraction library for .NET applications.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Updated packages.</PackageReleaseNotes>
-    <Copyright>Copyright 2017 © 1TCompany AB. All rights reserved.</Copyright>
+    <Copyright>Copyright 2023 © Jonas Gauffin. All rights reserved.</Copyright>
     <PackageTags>cqrs cqs command query abstraction griffin.container dependency-injection</PackageTags>
     <RepositoryUrl>https://github.com/jgauffin/dotnetcqs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/jgauffin/dotnetcqs</PackageProjectUrl>
-    <Version>2.0.2</Version>
+    <Version>2.0.23</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

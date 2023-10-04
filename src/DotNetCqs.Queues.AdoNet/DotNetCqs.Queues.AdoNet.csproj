@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DotNetCqs.Queues.AdoNet.xml</DocumentationFile>
     
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
     <PackageReleaseNotes>
       Message meta headers which already have been defined are now overwritten in AdoNetMessageDto.
     </PackageReleaseNotes>
