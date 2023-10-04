@@ -132,9 +132,9 @@ namespace DotNetCqs.Tests.DependencyInjection
             var scope = Substitute.For<IHandlerScope>();
             var result = new OneResult();
             QueryTwoResult expected = null;
-            var handler = new OneQueryHandler(result, (messageContext, query) =>
+            var handler = new OneAsyncQueryHandler(result, async (messageContext, query) =>
             {
-                expected=messageContext.QueryAsync(new QueryTwo()).GetAwaiter().GetResult();
+                expected=await messageContext.QueryAsync(new QueryTwo());
             });
             var result2 = new QueryTwoResult();
             var handler2=new QueryTwoHandler(result2);

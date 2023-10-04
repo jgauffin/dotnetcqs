@@ -34,6 +34,30 @@ namespace DotNetCqs.Tests.TestEntities
         }
     }
 
+    public class OneAsyncQueryHandler : IQueryHandler<OneQuery, OneResult>
+    {
+        private readonly OneResult _result;
+        private Func<IMessageContext, OneQuery, Task> _action;
+        public OneAsyncQueryHandler(OneResult result)
+        {
+            _result = result;
+        }
+        public OneAsyncQueryHandler(OneResult result, Func<IMessageContext, OneQuery, Task> action)
+        {
+            _result = result;
+            _action = action;
+        }
+        public async Task<OneResult> HandleAsync(IMessageContext context, OneQuery message)
+        {
+            if (_action != null)
+            {
+                await _action(context, message);
+            }
+
+            return _result;
+        }
+    }
+
 
     public class QueryTwo : Query<QueryTwoResult>
     {
